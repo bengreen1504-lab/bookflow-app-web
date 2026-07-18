@@ -1,0 +1,971 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>body{margin:0;background:#EDEFF1}[data-hscroll]::-webkit-scrollbar{display:none}[data-hscroll]{scrollbar-width:none}a{color:#17AEBF}a:hover{color:#0E8695}</style>
+</helmet>
+<div style="display:flex;justify-content:center;padding:40px 20px;">
+<x-import component-from-global-scope="ChromeWindow" from="./browser-window.jsx" width="{{ devW }}" height="{{ devH }}" url="bookflow.app" hint-size="1440,900">
+<div style="height:100%;display:flex;flex-direction:column;background:#fff;font-family:-apple-system,system-ui,sans-serif;overflow:hidden;">
+
+<sc-if value="{{ isAuthed }}" hint-placeholder-val="{{ false }}">
+<div style="display:flex;align-items:center;gap:32px;padding:16px 40px;border-bottom:1px solid #E7EAEC;flex-shrink:0;">
+<img src="./bookflow-logo-cropped.png" alt="BookFlow" style="height:34px;width:auto;">
+<div style="display:flex;gap:6px;flex:1;">
+<div onClick="{{ goHome }}" style="{{ navHomeStyle }}">Browse</div>
+<div onClick="{{ goBookings }}" style="{{ navBookingsStyle }}">Bookings</div>
+<div onClick="{{ goChat }}" style="{{ navChatStyle }}">Messages</div>
+</div>
+<div onClick="{{ goNotifications }}" style="width:38px;height:38px;border-radius:19px;background:#F5F6F7;display:flex;align-items:center;justify-content:center;cursor:pointer;position:relative;flex-shrink:0;">
+<svg width="16" height="18" viewBox="0 0 18 20"><path d="M9 1a5.5 5.5 0 00-5.5 5.5V11L1.5 14.5h15L14 11V6.5A5.5 5.5 0 009 1z" fill="none" stroke="#151A1E" stroke-width="1.7" stroke-linejoin="round"></path><path d="M6.5 17.5a2.5 2.5 0 005 0" fill="none" stroke="#151A1E" stroke-width="1.7"></path></svg>
+<sc-if value="{{ hasUnreadNotif }}" hint-placeholder-val="{{ false }}"><div style="position:absolute;top:8px;right:9px;width:8px;height:8px;border-radius:4px;background:#D64545;"></div></sc-if>
+</div>
+<div onClick="{{ goProfile }}" style="width:38px;height:38px;border-radius:19px;background:#151A1E;color:#fff;font-size:14px;font-weight:700;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;">{{ userInitial }}</div>
+</div>
+</sc-if>
+
+<div style="flex:1;min-width:0;overflow:auto;">
+
+<sc-if value="{{ isSignin }}" hint-placeholder-val="{{ false }}">
+<div style="max-width:400px;margin:60px auto;padding:0 20px;display:flex;flex-direction:column;align-items:center;">
+<img src="./bookflow-logo-cropped.png" alt="BookFlow" style="height:52px;width:auto;margin-bottom:32px;">
+<div style="width:100%;text-align:center;margin-bottom:28px;">
+<div style="font-size:26px;font-weight:800;color:#151A1E;">Welcome Back</div>
+<div style="font-size:14px;color:#6B7580;margin-top:4px;">Sign in to continue</div>
+</div>
+<div style="width:100%;display:flex;flex-direction:column;gap:14px;">
+<input type="email" placeholder="Email" value="{{ email }}" onChange="{{ setEmail }}" style="width:100%;padding:14px;border:1.5px solid #E7EAEC;border-radius:12px;font-size:15px;box-sizing:border-box;outline:none;color:#151A1E;">
+<input type="password" placeholder="Password" value="{{ password }}" onChange="{{ setPassword }}" style="width:100%;padding:14px;border:1.5px solid #E7EAEC;border-radius:12px;font-size:15px;box-sizing:border-box;outline:none;color:#151A1E;">
+<div style="text-align:right;"><span onClick="{{ goForgotPassword }}" style="font-size:13px;color:#17AEBF;font-weight:600;cursor:pointer;">Forgot Password?</span></div>
+<div onClick="{{ signIn }}" style="width:100%;padding:15px;background:#17AEBF;color:#fff;border-radius:12px;font-size:15.5px;font-weight:700;text-align:center;cursor:pointer;box-sizing:border-box;">Sign In</div>
+<div style="text-align:center;font-size:14px;color:#6B7580;">Don't have an account? <span onClick="{{ goSignup }}" style="color:#17AEBF;font-weight:700;cursor:pointer;">Sign Up</span></div>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ isSignup }}" hint-placeholder-val="{{ false }}">
+<div style="max-width:400px;margin:60px auto;padding:0 20px;">
+<div style="font-size:26px;font-weight:800;color:#151A1E;margin-bottom:4px;">Create Account</div>
+<div style="font-size:14px;color:#6B7580;margin-bottom:24px;">Book your first service today</div>
+<div style="display:flex;flex-direction:column;gap:14px;">
+<input type="text" placeholder="Full Name" value="{{ signupName }}" onChange="{{ setSignupName }}" style="width:100%;padding:14px;border:1.5px solid #E7EAEC;border-radius:12px;font-size:15px;box-sizing:border-box;outline:none;color:#151A1E;">
+<input type="email" placeholder="Email" value="{{ signupEmail }}" onChange="{{ setSignupEmail }}" style="width:100%;padding:14px;border:1.5px solid #E7EAEC;border-radius:12px;font-size:15px;box-sizing:border-box;outline:none;color:#151A1E;">
+<input type="password" placeholder="Password" value="{{ signupPassword }}" onChange="{{ setSignupPassword }}" style="width:100%;padding:14px;border:1.5px solid #E7EAEC;border-radius:12px;font-size:15px;box-sizing:border-box;outline:none;color:#151A1E;">
+<div onClick="{{ signUp }}" style="width:100%;padding:15px;background:#17AEBF;color:#fff;border-radius:12px;font-size:15.5px;font-weight:700;text-align:center;cursor:pointer;box-sizing:border-box;">Create Account</div>
+<div style="text-align:center;font-size:14px;color:#6B7580;">Already have an account? <span onClick="{{ goSigninScreen }}" style="color:#17AEBF;font-weight:700;cursor:pointer;">Sign In</span></div>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ isForgotPassword }}" hint-placeholder-val="{{ false }}">
+<div style="max-width:400px;margin:60px auto;padding:0 20px;">
+<div style="font-size:26px;font-weight:800;color:#151A1E;margin-bottom:4px;">Reset Password</div>
+<div style="font-size:14px;color:#6B7580;margin-bottom:24px;">Enter your email and we'll send you a reset link</div>
+<div style="display:flex;flex-direction:column;gap:14px;">
+<input type="email" placeholder="Email" value="{{ forgotEmail }}" onChange="{{ setForgotEmail }}" style="width:100%;padding:14px;border:1.5px solid #E7EAEC;border-radius:12px;font-size:15px;box-sizing:border-box;outline:none;color:#151A1E;">
+<div onClick="{{ sendResetLink }}" style="width:100%;padding:15px;background:#17AEBF;color:#fff;border-radius:12px;font-size:15.5px;font-weight:700;text-align:center;cursor:pointer;box-sizing:border-box;">Send Reset Link</div>
+<div style="text-align:center;font-size:14px;color:#6B7580;">Remember it? <span onClick="{{ goSigninScreen }}" style="color:#17AEBF;font-weight:700;cursor:pointer;">Sign In</span></div>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ isPaymentMethods }}" hint-placeholder-val="{{ false }}">
+<div style="max-width:560px;margin:0 auto;padding:32px 40px 60px;">
+<div style="display:flex;align-items:center;gap:14px;margin-bottom:24px;">
+<div onClick="{{ back }}" style="width:38px;height:38px;border-radius:19px;background:#F5F6F7;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;">
+<svg width="10" height="16" viewBox="0 0 12 20"><path d="M10 2L2 10l8 8" fill="none" stroke="#151A1E" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+</div>
+<div style="font-size:22px;font-weight:800;color:#151A1E;">Payment Methods</div>
+</div>
+<div style="display:flex;flex-direction:column;gap:12px;">
+<sc-for list="{{ paymentCardsList }}" as="c" hint-placeholder-count="2">
+<div style="display:flex;align-items:center;gap:14px;border:1px solid #E7EAEC;border-radius:14px;padding:16px;">
+<div style="width:46px;height:32px;border-radius:6px;background:#151A1E;color:#fff;font-size:10px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;">{{ c.brandCode }}</div>
+<div style="flex:1;font-size:15px;font-weight:600;color:#151A1E;">•••• {{ c.last4 }}</div>
+<div onClick="{{ c.onSetDefault }}" style="{{ c.badgeStyle }}">{{ c.badgeLabel }}</div>
+</div>
+</sc-for>
+<div onClick="{{ addCard }}" style="width:100%;padding:15px;background:#EAF7F9;color:#0E8695;border-radius:12px;font-size:14.5px;font-weight:700;text-align:center;cursor:pointer;">+ Add Payment Method</div>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ isSettings }}" hint-placeholder-val="{{ false }}">
+<div style="max-width:560px;margin:0 auto;padding:32px 40px 60px;">
+<div style="display:flex;align-items:center;gap:14px;margin-bottom:24px;">
+<div onClick="{{ back }}" style="width:38px;height:38px;border-radius:19px;background:#F5F6F7;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;">
+<svg width="10" height="16" viewBox="0 0 12 20"><path d="M10 2L2 10l8 8" fill="none" stroke="#151A1E" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+</div>
+<div style="font-size:22px;font-weight:800;color:#151A1E;">Settings</div>
+</div>
+<div style="display:flex;flex-direction:column;">
+<div style="display:flex;align-items:center;justify-content:space-between;padding:16px 0;border-bottom:1px solid #E7EAEC;">
+<div><div style="font-size:14.5px;font-weight:600;color:#151A1E;">Push Notifications</div><div style="font-size:12.5px;color:#6B7580;margin-top:2px;">Booking reminders &amp; updates</div></div>
+<div onClick="{{ toggleSettingPush }}" style="{{ settingPushTrackStyle }}"><div style="{{ settingPushKnobStyle }}"></div></div>
+</div>
+<div style="display:flex;align-items:center;justify-content:space-between;padding:16px 0;border-bottom:1px solid #E7EAEC;">
+<div><div style="font-size:14.5px;font-weight:600;color:#151A1E;">Email Reminders</div><div style="font-size:12.5px;color:#6B7580;margin-top:2px;">Receipts &amp; appointment recaps</div></div>
+<div onClick="{{ toggleSettingEmail }}" style="{{ settingEmailTrackStyle }}"><div style="{{ settingEmailKnobStyle }}"></div></div>
+</div>
+<div style="display:flex;align-items:center;justify-content:space-between;padding:16px 0;border-bottom:1px solid #E7EAEC;">
+<div><div style="font-size:14.5px;font-weight:600;color:#151A1E;">Promotional Offers</div><div style="font-size:12.5px;color:#6B7580;margin-top:2px;">Deals from your favorite providers</div></div>
+<div onClick="{{ toggleSettingPromo }}" style="{{ settingPromoTrackStyle }}"><div style="{{ settingPromoKnobStyle }}"></div></div>
+</div>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ isHome }}" hint-placeholder-val="{{ true }}">
+<div style="max-width:1080px;margin:0 auto;padding:40px 40px 60px;">
+<div data-hscroll style="display:flex;gap:16px;overflow-x:auto;scroll-snap-type:x mandatory;margin-bottom:32px;">
+<sc-for list="{{ heroSlides }}" as="hs" hint-placeholder-count="3">
+<div style="{{ hs.style }}">
+<div style="font-size:11.5px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;opacity:0.85;">{{ hs.eyebrow }}</div>
+<div style="font-size:24px;font-weight:800;margin-top:8px;line-height:1.2;">{{ hs.title }}</div>
+<div style="font-size:14px;margin-top:8px;opacity:0.9;">{{ hs.subtitle }}</div>
+</div>
+</sc-for>
+</div>
+
+<div style="font-size:14px;font-weight:700;color:#6B7580;text-transform:uppercase;letter-spacing:0.04em;margin:0 0 14px;">Categories</div>
+<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:36px;">
+<sc-for list="{{ categories }}" as="cat" hint-placeholder-count="4">
+<div onClick="{{ cat.onClick }}" style-hover="background:#F5F6F7" style="display:flex;align-items:center;gap:12px;padding:16px;border:1px solid #E7EAEC;border-radius:14px;cursor:pointer;">
+<div style="width:44px;height:44px;border-radius:22px;background:#EAF7F9;display:flex;align-items:center;justify-content:center;color:#0E8695;font-weight:800;font-size:13px;flex-shrink:0;">{{ cat.mono }}</div>
+<div style="font-size:14.5px;font-weight:700;color:#151A1E;">{{ cat.id }}</div>
+</div>
+</sc-for>
+</div>
+
+<div style="font-size:14px;font-weight:700;color:#6B7580;text-transform:uppercase;letter-spacing:0.04em;margin:0 0 14px;">Nearby Providers</div>
+<div style="display:grid;grid-template-columns:repeat(2,1fr);gap:16px;">
+<sc-for list="{{ homeProviders }}" as="p" hint-placeholder-count="4">
+<div onClick="{{ p.onClick }}" style-hover="box-shadow:0 4px 14px rgba(15,25,30,0.08)" style="display:flex;gap:14px;padding:16px;border:1px solid #E7EAEC;border-radius:14px;cursor:pointer;align-items:center;transition:box-shadow 0.15s;">
+<div style="width:72px;height:72px;border-radius:12px;flex-shrink:0;background:repeating-linear-gradient(45deg,#F0F3F4,#F0F3F4 6px,#E7EAEC 6px,#E7EAEC 12px);"></div>
+<div style="flex:1;min-width:0;">
+<div style="font-size:16px;font-weight:700;color:#151A1E;">{{ p.name }}</div>
+<div style="font-size:13px;color:#6B7580;margin-top:2px;">{{ p.category }}</div>
+<div style="display:flex;align-items:center;gap:6px;margin-top:6px;">
+<span style="color:#DE9A34;font-size:14px;">★</span>
+<span style="font-size:13px;color:#151A1E;font-weight:600;">{{ p.ratingLabel }}</span>
+<span style="font-size:13px;color:#9AA5AC;">{{ p.fromLabel }}</span>
+</div>
+</div>
+</div>
+</sc-for>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ isCategory }}" hint-placeholder-val="{{ false }}">
+<div style="max-width:1080px;margin:0 auto;padding:32px 40px 60px;">
+<div style="display:flex;align-items:center;gap:14px;margin-bottom:24px;">
+<div onClick="{{ back }}" style="width:38px;height:38px;border-radius:19px;background:#F5F6F7;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;">
+<svg width="10" height="16" viewBox="0 0 12 20"><path d="M10 2L2 10l8 8" fill="none" stroke="#151A1E" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+</div>
+<div style="font-size:23px;font-weight:800;color:#151A1E;">{{ selectedCategory }}</div>
+</div>
+<div style="display:grid;grid-template-columns:repeat(2,1fr);gap:16px;">
+<sc-for list="{{ categoryProviders }}" as="p" hint-placeholder-count="2">
+<div onClick="{{ p.onClick }}" style-hover="box-shadow:0 4px 14px rgba(15,25,30,0.08)" style="display:flex;gap:14px;padding:16px;border:1px solid #E7EAEC;border-radius:14px;cursor:pointer;align-items:center;transition:box-shadow 0.15s;">
+<div style="width:80px;height:80px;border-radius:12px;flex-shrink:0;background:repeating-linear-gradient(45deg,#F0F3F4,#F0F3F4 6px,#E7EAEC 6px,#E7EAEC 12px);"></div>
+<div style="flex:1;min-width:0;">
+<div style="font-size:16px;font-weight:700;color:#151A1E;">{{ p.name }}</div>
+<div style="font-size:13px;color:#6B7580;margin-top:2px;">{{ p.address }}</div>
+<div style="display:flex;align-items:center;gap:6px;margin-top:6px;">
+<span style="color:#DE9A34;font-size:14px;">★</span>
+<span style="font-size:13px;color:#151A1E;font-weight:600;">{{ p.ratingFullLabel }}</span>
+<span style="font-size:13px;color:#9AA5AC;">{{ p.fromLabel }}</span>
+</div>
+</div>
+</div>
+</sc-for>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ isProvider }}" hint-placeholder-val="{{ false }}">
+<div style="max-width:1080px;margin:0 auto;padding:32px 40px 60px;">
+<div style="display:flex;align-items:center;gap:14px;margin-bottom:20px;">
+<div onClick="{{ back }}" style="width:38px;height:38px;border-radius:19px;background:#F5F6F7;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;">
+<svg width="10" height="16" viewBox="0 0 12 20"><path d="M10 2L2 10l8 8" fill="none" stroke="#151A1E" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+</div>
+<div style="font-size:19px;font-weight:800;color:#151A1E;">Provider</div>
+</div>
+<div style="display:grid;grid-template-columns:1.3fr 1fr;gap:32px;align-items:start;">
+<div>
+<div data-hscroll style="display:flex;gap:12px;overflow-x:auto;scroll-snap-type:x mandatory;margin-bottom:20px;">
+<sc-for list="{{ providerGallery }}" as="g" hint-placeholder-count="3">
+<div style="flex:0 0 320px;height:200px;border-radius:16px;scroll-snap-align:start;background:repeating-linear-gradient(45deg,#F0F3F4,#F0F3F4 10px,#E7EAEC 10px,#E7EAEC 20px);display:flex;align-items:center;justify-content:center;color:#8A939B;font:600 11px ui-monospace,monospace;text-transform:uppercase;">{{ g.label }}</div>
+</sc-for>
+</div>
+<div style="font-size:26px;font-weight:800;color:#151A1E;">{{ currentProvider.name }}</div>
+<div style="font-size:14px;color:#6B7580;margin-top:4px;">{{ currentProvider.address }}</div>
+<div style="display:flex;align-items:center;gap:10px;margin-top:10px;margin-bottom:24px;">
+<span style="color:#DE9A34;font-size:15px;">★</span>
+<span style="font-size:14.5px;color:#151A1E;font-weight:700;">{{ currentProvider.ratingFullLabel }}</span>
+<span onClick="{{ openReviews }}" style="font-size:13.5px;color:#17AEBF;font-weight:600;cursor:pointer;">See reviews</span>
+</div>
+<div style="font-size:13px;font-weight:700;color:#6B7580;text-transform:uppercase;letter-spacing:0.04em;margin:0 0 12px;">Services</div>
+<div style="display:flex;flex-direction:column;gap:10px;">
+<sc-for list="{{ currentServices }}" as="svc" hint-placeholder-count="3">
+<div onClick="{{ svc.onToggle }}" style="{{ svc.rowStyle }}">
+<div>
+<div style="font-size:15px;font-weight:700;color:#151A1E;">{{ svc.name }}</div>
+<div style="font-size:13px;color:#6B7580;margin-top:2px;">{{ svc.duration }}</div>
+</div>
+<div style="display:flex;align-items:center;gap:12px;">
+<div style="font-size:15px;font-weight:700;color:#151A1E;">{{ svc.priceLabel }}</div>
+<div style="{{ svc.checkStyle }}">
+<svg width="12" height="10" viewBox="0 0 14 12"><path d="M1 6l4.5 4.5L13 2" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+</div>
+</div>
+</div>
+</sc-for>
+</div>
+</div>
+<div style="position:sticky;top:0;border:1px solid #E7EAEC;border-radius:16px;padding:22px;">
+<div style="font-size:14px;font-weight:700;color:#151A1E;margin-bottom:14px;">Book an appointment</div>
+<div onClick="{{ goBooking }}" style="width:100%;padding:15px;background:#17AEBF;color:#fff;border-radius:12px;font-size:15px;font-weight:700;text-align:center;cursor:pointer;box-sizing:border-box;">{{ continueLabel }}</div>
+</div>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ isBooking }}" hint-placeholder-val="{{ false }}">
+<div style="max-width:980px;margin:0 auto;padding:32px 40px 60px;">
+<div style="display:flex;align-items:center;gap:14px;margin-bottom:28px;">
+<div onClick="{{ back }}" style="width:38px;height:38px;border-radius:19px;background:#F5F6F7;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;">
+<svg width="10" height="16" viewBox="0 0 12 20"><path d="M10 2L2 10l8 8" fill="none" stroke="#151A1E" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+</div>
+<div style="font-size:22px;font-weight:800;color:#151A1E;">Select Date &amp; Time</div>
+</div>
+<div style="border:1px solid #E7EAEC;border-radius:20px;box-shadow:0 4px 24px rgba(15,25,30,0.05);display:grid;grid-template-columns:230px 1fr 220px;">
+
+<div style="padding:28px 24px;border-right:1px solid #E7EAEC;">
+<div style="width:48px;height:48px;border-radius:24px;background:#EAF7F9;color:#0E8695;font-weight:800;font-size:16px;display:flex;align-items:center;justify-content:center;margin-bottom:16px;">{{ bookingProviderInitial }}</div>
+<div style="font-size:16px;font-weight:700;color:#151A1E;margin-bottom:6px;">{{ currentProvider.name }}</div>
+<div style="font-size:13px;color:#6B7580;line-height:1.5;">{{ bookingDurationLabel }}</div>
+<div style="display:flex;align-items:center;gap:6px;margin-top:16px;color:#6B7580;font-size:12.5px;">
+<svg width="13" height="13" viewBox="0 0 14 14"><circle cx="7" cy="7" r="6" fill="none" stroke="#6B7580" stroke-width="1.3"></circle><path d="M7 3.5V7l2.5 1.5" fill="none" stroke="#6B7580" stroke-width="1.3" stroke-linecap="round"></path></svg>
+Central Time
+</div>
+</div>
+
+<div style="padding:28px 24px;border-right:1px solid #E7EAEC;">
+<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;">
+<div onClick="{{ prevCalMonth }}" style="{{ calMonthPrevStyle }}">
+<svg width="8" height="13" viewBox="0 0 9 14"><path d="M8 1L2 7l6 6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+</div>
+<div style="font-size:15.5px;font-weight:800;color:#151A1E;">{{ calMonthLabel }}</div>
+<div onClick="{{ nextCalMonth }}" style="width:32px;height:32px;border-radius:16px;background:#F5F6F7;display:flex;align-items:center;justify-content:center;cursor:pointer;color:#151A1E;">
+<svg width="8" height="13" viewBox="0 0 9 14"><path d="M1 1l6 6-6 6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+</div>
+</div>
+<div style="display:grid;grid-template-columns:repeat(7,1fr);gap:2px;margin-bottom:6px;">
+<sc-for list="{{ calWeekdayLabels }}" as="wd" hint-placeholder-count="7">
+<div style="text-align:center;font-size:11px;font-weight:700;color:#9AA5AC;padding:6px 0;">{{ wd }}</div>
+</sc-for>
+</div>
+<div style="display:flex;flex-direction:column;gap:4px;">
+<sc-for list="{{ calWeeks }}" as="week" hint-placeholder-count="5">
+<div style="display:grid;grid-template-columns:repeat(7,1fr);gap:2px;">
+<sc-for list="{{ week.days }}" as="d" hint-placeholder-count="7">
+<div onClick="{{ d.onClick }}" style="{{ d.style }}">{{ d.num }}</div>
+</sc-for>
+</div>
+</sc-for>
+</div>
+</div>
+
+<div style="padding:28px 20px;">
+<div style="font-size:13px;font-weight:700;color:#6B7580;text-transform:uppercase;letter-spacing:0.04em;margin-bottom:14px;">Available Times</div>
+<sc-if value="{{ hasSelectedDate }}" hint-placeholder-val="{{ false }}">
+<div style="display:flex;flex-direction:column;gap:8px;max-height:280px;overflow:auto;">
+<sc-for list="{{ timeSlots }}" as="t" hint-placeholder-count="8">
+<div onClick="{{ t.onClick }}" style="{{ t.style }}">{{ t.label }}</div>
+</sc-for>
+</div>
+</sc-if>
+<sc-if value="{{ noSelectedDate }}" hint-placeholder-val="{{ true }}">
+<div style="color:#9AA5AC;font-size:13px;line-height:1.5;">Pick a date to see open times.</div>
+</sc-if>
+</div>
+</div>
+
+<div onClick="{{ goCheckout }}" style="width:100%;padding:16px;background:#17AEBF;color:#fff;border-radius:12px;font-size:15.5px;font-weight:700;text-align:center;cursor:pointer;box-sizing:border-box;margin-top:24px;">Continue to Checkout</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ isCheckout }}" hint-placeholder-val="{{ false }}">
+<div style="max-width:640px;margin:0 auto;padding:32px 40px 60px;">
+<div style="display:flex;align-items:center;gap:14px;margin-bottom:24px;">
+<div onClick="{{ back }}" style="width:38px;height:38px;border-radius:19px;background:#F5F6F7;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;">
+<svg width="10" height="16" viewBox="0 0 12 20"><path d="M10 2L2 10l8 8" fill="none" stroke="#151A1E" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+</div>
+<div style="font-size:22px;font-weight:800;color:#151A1E;">Checkout</div>
+</div>
+<div style="background:#F5F6F7;border-radius:14px;padding:20px;margin-bottom:24px;">
+<div style="font-size:16px;font-weight:700;color:#151A1E;margin-bottom:2px;">{{ currentProvider.name }}</div>
+<div style="font-size:13.5px;color:#6B7580;margin-bottom:14px;">{{ bookingWhenLabel }}</div>
+<sc-for list="{{ selectedServicesList }}" as="svc" hint-placeholder-count="1">
+<div style="display:flex;justify-content:space-between;font-size:14px;color:#151A1E;padding:5px 0;">
+<span>{{ svc.name }}</span><span style="font-weight:600;">{{ svc.priceLabel }}</span>
+</div>
+</sc-for>
+<div style="display:flex;justify-content:space-between;font-size:16px;font-weight:800;color:#151A1E;border-top:1px solid #E7EAEC;margin-top:12px;padding-top:12px;">
+<span>Total</span><span>{{ totalLabel }}</span>
+</div>
+</div>
+<div style="font-size:13px;font-weight:700;color:#6B7580;text-transform:uppercase;letter-spacing:0.04em;margin:0 0 14px;">Payment Method · <span style="color:#635BFF;text-transform:none;font-weight:700;">Stripe</span></div>
+<div style="display:flex;flex-direction:column;gap:10px;margin-bottom:14px;">
+<sc-for list="{{ paymentOptions }}" as="pm" hint-placeholder-count="3">
+<div onClick="{{ pm.onClick }}" style="display:flex;align-items:center;gap:14px;padding:15px;border:1.5px solid #E7EAEC;border-radius:12px;cursor:pointer;">
+<div style="{{ pm.dotOuter }}"><div style="{{ pm.dotInner }}"></div></div>
+<div style="{{ pm.iconWrap }}" dangerouslySetInnerHTML="{{ pm.iconHtml }}"></div>
+<div style="font-size:14.5px;font-weight:600;color:#151A1E;">{{ pm.label }}</div>
+</div>
+</sc-for>
+</div>
+<div style="display:flex;align-items:center;justify-content:center;gap:6px;margin-bottom:20px;color:#9AA5AC;font-size:12px;">
+<svg width="11" height="13" viewBox="0 0 12 14"><rect x="1" y="6" width="10" height="7" rx="1.5" fill="none" stroke="#9AA5AC" stroke-width="1.3"></rect><path d="M3 6V4a3 3 0 016 0v2" fill="none" stroke="#9AA5AC" stroke-width="1.3"></path></svg>
+<span>Payments secured by <b style="color:#635BFF;">Stripe</b></span>
+</div>
+<div onClick="{{ placeOrder }}" style="width:100%;padding:16px;background:#17AEBF;color:#fff;border-radius:12px;font-size:15.5px;font-weight:700;text-align:center;cursor:pointer;box-sizing:border-box;">Pay {{ totalLabel }}</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ isConfirmation }}" hint-placeholder-val="{{ false }}">
+<div style="max-width:520px;margin:0 auto;padding:70px 40px 60px;display:flex;flex-direction:column;align-items:center;text-align:center;">
+<div style="width:76px;height:76px;border-radius:38px;background:#E9F8EF;display:flex;align-items:center;justify-content:center;margin-bottom:22px;">
+<svg width="32" height="26" viewBox="0 0 30 24"><path d="M3 12l9 9L27 3" fill="none" stroke="#1E9E5A" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+</div>
+<div style="font-size:24px;font-weight:800;color:#151A1E;">Booking Confirmed</div>
+<div style="font-size:14.5px;color:#6B7580;margin-top:6px;margin-bottom:26px;">Your appointment has been booked</div>
+<div style="width:100%;background:#F5F6F7;border-radius:14px;padding:20px;text-align:left;margin-bottom:24px;box-sizing:border-box;">
+<div style="font-size:16px;font-weight:700;color:#151A1E;">{{ lastBooking.providerName }}</div>
+<div style="font-size:13.5px;color:#6B7580;margin-top:4px;">{{ lastBooking.serviceName }}</div>
+<div style="font-size:13.5px;color:#6B7580;margin-top:2px;">{{ lastBooking.dateTimeLabel }}</div>
+<div style="font-size:16px;font-weight:800;color:#151A1E;margin-top:10px;">{{ lastBooking.priceLabel }}</div>
+</div>
+<div onClick="{{ goHomeDone }}" style="width:100%;padding:16px;background:#17AEBF;color:#fff;border-radius:12px;font-size:15.5px;font-weight:700;text-align:center;cursor:pointer;box-sizing:border-box;">Done</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ isBookings }}" hint-placeholder-val="{{ false }}">
+<div style="max-width:900px;margin:0 auto;padding:32px 40px 60px;">
+<div style="font-size:28px;font-weight:800;color:#151A1E;margin-bottom:18px;">Bookings</div>
+<div style="display:flex;gap:8px;margin-bottom:24px;">
+<sc-for list="{{ bookingsTabs }}" as="tb" hint-placeholder-count="4">
+<div onClick="{{ tb.onClick }}" style="{{ tb.style }}">{{ tb.label }}</div>
+</sc-for>
+</div>
+<div style="display:flex;flex-direction:column;gap:12px;">
+<sc-for list="{{ filteredBookings }}" as="b" hint-placeholder-count="2">
+<div onClick="{{ b.onClick }}" style-hover="box-shadow:0 4px 14px rgba(15,25,30,0.08)" style="border:1px solid #E7EAEC;border-radius:14px;padding:16px 18px;cursor:pointer;transition:box-shadow 0.15s;">
+<div style="display:flex;justify-content:space-between;align-items:flex-start;">
+<div style="font-size:15.5px;font-weight:700;color:#151A1E;">{{ b.providerName }}</div>
+<div style="{{ b.statusStyle }}">{{ b.statusLabel }}</div>
+</div>
+<div style="font-size:13.5px;color:#6B7580;margin-top:5px;">{{ b.serviceName }}</div>
+<div style="font-size:13.5px;color:#6B7580;margin-top:2px;">{{ b.dateTimeLabel }}</div>
+</div>
+</sc-for>
+<sc-if value="{{ noBookingsInTab }}" hint-placeholder-val="{{ false }}">
+<div style="text-align:center;color:#9AA5AC;font-size:14px;padding:48px 0;">No bookings here yet.</div>
+</sc-if>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ isBookingDetail }}" hint-placeholder-val="{{ false }}">
+<div style="max-width:560px;margin:0 auto;padding:32px 40px 60px;">
+<div style="display:flex;align-items:center;gap:14px;margin-bottom:24px;">
+<div onClick="{{ back }}" style="width:38px;height:38px;border-radius:19px;background:#F5F6F7;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;">
+<svg width="10" height="16" viewBox="0 0 12 20"><path d="M10 2L2 10l8 8" fill="none" stroke="#151A1E" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+</div>
+<div style="font-size:22px;font-weight:800;color:#151A1E;">Booking Details</div>
+</div>
+<div style="background:#F5F6F7;border-radius:14px;padding:22px;margin-bottom:24px;">
+<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px;">
+<div style="font-size:18px;font-weight:800;color:#151A1E;">{{ activeBooking.providerName }}</div>
+<div style="{{ activeBooking.statusStyle }}">{{ activeBooking.statusLabel }}</div>
+</div>
+<div style="font-size:14.5px;color:#151A1E;margin-top:6px;">{{ activeBooking.serviceName }}</div>
+<div style="font-size:14px;color:#6B7580;margin-top:4px;">{{ activeBooking.dateTimeLabel }}</div>
+<div style="font-size:17px;font-weight:800;color:#151A1E;margin-top:12px;">{{ activeBooking.priceLabel }}</div>
+</div>
+<div style="display:flex;flex-direction:column;gap:10px;">
+<div onClick="{{ messageActiveProvider }}" style="width:100%;padding:15px;background:#fff;color:#151A1E;border:1.5px solid #E7EAEC;border-radius:12px;font-size:14.5px;font-weight:700;text-align:center;cursor:pointer;box-sizing:border-box;">Message Provider</div>
+<sc-if value="{{ activeBooking.isUpcoming }}" hint-placeholder-val="{{ false }}">
+<div onClick="{{ cancelActiveBooking }}" style="width:100%;padding:15px;background:#fff;color:#D64545;border:1.5px solid #F3D6D6;border-radius:12px;font-size:14.5px;font-weight:700;text-align:center;cursor:pointer;box-sizing:border-box;">Cancel Booking</div>
+</sc-if>
+<sc-if value="{{ activeBooking.isCompleted }}" hint-placeholder-val="{{ false }}">
+<div onClick="{{ startReviewForActive }}" style="width:100%;padding:15px;background:#17AEBF;color:#fff;border-radius:12px;font-size:14.5px;font-weight:700;text-align:center;cursor:pointer;box-sizing:border-box;">Leave a Review</div>
+</sc-if>
+<sc-if value="{{ activeBooking.isCancelled }}" hint-placeholder-val="{{ false }}">
+<div onClick="{{ bookAgainActive }}" style="width:100%;padding:15px;background:#17AEBF;color:#fff;border-radius:12px;font-size:14.5px;font-weight:700;text-align:center;cursor:pointer;box-sizing:border-box;">Book Again</div>
+</sc-if>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ isChat }}" hint-placeholder-val="{{ false }}">
+<div style="max-width:760px;margin:0 auto;padding:32px 40px 60px;height:calc(100% - 92px);box-sizing:border-box;display:flex;flex-direction:column;">
+<div style="display:flex;align-items:center;gap:14px;margin-bottom:20px;">
+<div onClick="{{ chatBack }}" style="width:38px;height:38px;border-radius:19px;background:#F5F6F7;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;">
+<svg width="10" height="16" viewBox="0 0 12 20"><path d="M10 2L2 10l8 8" fill="none" stroke="#151A1E" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+</div>
+<div style="font-size:19px;font-weight:800;color:#151A1E;">{{ chatProviderName }}</div>
+</div>
+<div style="flex:1;display:flex;flex-direction:column;gap:14px;overflow:auto;margin-bottom:16px;">
+<sc-for list="{{ chatMessagesList }}" as="m" hint-placeholder-count="3">
+<div style="{{ m.rowStyle }}">
+<div style="{{ m.bubbleStyle }}">{{ m.text }}</div>
+<div style="{{ m.timeStyle }}">{{ m.time }}</div>
+</div>
+</sc-for>
+</div>
+<div style="display:flex;gap:10px;align-items:center;">
+<input type="text" placeholder="Message" value="{{ chatInput }}" onChange="{{ setChatInput }}" style="flex:1;padding:13px 16px;border:1.5px solid #E7EAEC;border-radius:22px;font-size:14.5px;outline:none;box-sizing:border-box;color:#151A1E;">
+<div onClick="{{ sendChat }}" style="width:44px;height:44px;border-radius:22px;background:#17AEBF;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;">
+<svg width="17" height="17" viewBox="0 0 20 20"><polygon points="2,17 18,10 2,3 6,10" fill="#fff"></polygon></svg>
+</div>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ isNotifications }}" hint-placeholder-val="{{ false }}">
+<div style="max-width:700px;margin:0 auto;padding:32px 40px 60px;">
+<div style="font-size:28px;font-weight:800;color:#151A1E;margin-bottom:18px;">Notifications</div>
+<div style="display:flex;flex-direction:column;gap:4px;">
+<sc-for list="{{ notificationsList }}" as="n" hint-placeholder-count="4">
+<div onClick="{{ n.onClick }}" style-hover="background:#F5F6F7" style="display:flex;gap:14px;padding:14px 10px;border-radius:12px;cursor:pointer;align-items:flex-start;">
+<div style="width:42px;height:42px;border-radius:21px;background:#EAF7F9;color:#0E8695;display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0;">{{ n.glyph }}</div>
+<div style="flex:1;min-width:0;">
+<div style="font-size:14.5px;font-weight:700;color:#151A1E;">{{ n.title }}</div>
+<div style="font-size:13.5px;color:#6B7580;margin-top:2px;">{{ n.subtitle }}</div>
+<div style="font-size:12.5px;color:#9AA5AC;margin-top:3px;">{{ n.time }}</div>
+</div>
+<div style="{{ n.dotStyle }}"></div>
+</div>
+</sc-for>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ isReviews }}" hint-placeholder-val="{{ false }}">
+<div style="max-width:700px;margin:0 auto;padding:32px 40px 60px;">
+<div style="display:flex;align-items:center;gap:14px;margin-bottom:24px;">
+<div onClick="{{ back }}" style="width:38px;height:38px;border-radius:19px;background:#F5F6F7;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;">
+<svg width="10" height="16" viewBox="0 0 12 20"><path d="M10 2L2 10l8 8" fill="none" stroke="#151A1E" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+</div>
+<div style="font-size:22px;font-weight:800;color:#151A1E;">Reviews</div>
+</div>
+<div style="display:flex;align-items:center;gap:16px;background:#F5F6F7;border-radius:14px;padding:20px;margin-bottom:24px;">
+<div style="font-size:36px;font-weight:800;color:#151A1E;">{{ currentProvider.ratingLabel }}</div>
+<div>
+<div style="color:#DE9A34;font-size:15px;">★★★★★</div>
+<div style="font-size:13px;color:#6B7580;margin-top:3px;">{{ currentProvider.reviewCountLabel }}</div>
+</div>
+</div>
+<div style="display:flex;flex-direction:column;gap:16px;">
+<sc-for list="{{ currentReviews }}" as="r" hint-placeholder-count="2">
+<div style="border-bottom:1px solid #E7EAEC;padding-bottom:16px;">
+<div style="display:flex;justify-content:space-between;">
+<div style="font-size:14.5px;font-weight:700;color:#151A1E;">{{ r.author }}</div>
+<div style="font-size:12.5px;color:#9AA5AC;">{{ r.date }}</div>
+</div>
+<div style="color:#DE9A34;font-size:13.5px;margin-top:4px;">{{ r.starsLabel }}</div>
+<div style="font-size:14px;color:#151A1E;margin-top:8px;line-height:1.5;">{{ r.text }}</div>
+</div>
+</sc-for>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ isWriteReview }}" hint-placeholder-val="{{ false }}">
+<div style="max-width:560px;margin:0 auto;padding:32px 40px 60px;">
+<div style="display:flex;align-items:center;gap:14px;margin-bottom:24px;">
+<div onClick="{{ back }}" style="width:38px;height:38px;border-radius:19px;background:#F5F6F7;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;">
+<svg width="10" height="16" viewBox="0 0 12 20"><path d="M10 2L2 10l8 8" fill="none" stroke="#151A1E" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+</div>
+<div style="font-size:22px;font-weight:800;color:#151A1E;">Write a Review</div>
+</div>
+<div style="font-size:16px;font-weight:700;color:#151A1E;margin-bottom:18px;">{{ reviewTargetName }}</div>
+<div style="display:flex;gap:12px;justify-content:center;margin-bottom:26px;">
+<sc-for list="{{ reviewStars }}" as="st" hint-placeholder-count="5">
+<span onClick="{{ st.onClick }}" style="{{ st.style }}">★</span>
+</sc-for>
+</div>
+<textarea placeholder="Share details about your experience..." value="{{ reviewDraftText }}" onChange="{{ setReviewText }}" style="width:100%;height:140px;padding:16px;border:1.5px solid #E7EAEC;border-radius:12px;font-size:14.5px;box-sizing:border-box;outline:none;resize:none;font-family:inherit;color:#151A1E;"></textarea>
+<div onClick="{{ submitReview }}" style="{{ submitReviewStyle }}">Submit Review</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ isProfile }}" hint-placeholder-val="{{ false }}">
+<div style="max-width:640px;margin:0 auto;padding:32px 40px 60px;">
+<div style="font-size:28px;font-weight:800;color:#151A1E;margin-bottom:22px;">Profile</div>
+<div style="display:flex;align-items:center;gap:16px;background:#F5F6F7;border-radius:14px;padding:20px;margin-bottom:28px;">
+<div style="width:58px;height:58px;border-radius:29px;background:#151A1E;color:#fff;font-size:20px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;">{{ userInitial }}</div>
+<div>
+<div style="font-size:16.5px;font-weight:700;color:#151A1E;">{{ profileName }}</div>
+<div style="font-size:13.5px;color:#6B7580;margin-top:2px;">{{ profileEmail }}</div>
+</div>
+</div>
+<div style="display:flex;flex-direction:column;">
+<sc-for list="{{ profileMenu }}" as="m" hint-placeholder-count="4">
+<div onClick="{{ m.onClick }}" style-hover="background:#F5F6F7" style="display:flex;align-items:center;justify-content:space-between;padding:16px 10px;border-bottom:1px solid #E7EAEC;cursor:pointer;">
+<div style="font-size:15px;font-weight:600;color:{{ m.color }};">{{ m.label }}</div>
+<svg width="7" height="12" viewBox="0 0 9 14"><path d="M1 1l7 6-7 6" fill="none" stroke="#C3C9CE" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+</div>
+</sc-for>
+</div>
+</div>
+</sc-if>
+
+</div>
+</div>
+</x-import>
+</div>
+
+<sc-if value="{{ hasToast }}" hint-placeholder-val="{{ false }}">
+<div style="position:fixed;left:50%;bottom:32px;transform:translateX(-50%);background:#151A1E;color:#fff;padding:13px 20px;border-radius:12px;font-size:13.5px;font-weight:600;box-shadow:0 6px 20px rgba(0,0,0,0.25);z-index:999;">{{ toast }}</div>
+</sc-if>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  providers = {
+    p1: { id:'p1', name:'Fade Masters Barbershop', category:'Barbers', rating:4.8, reviewCount:132, priceFrom:30, address:'214 Elm St, Austin, TX' },
+    p2: { id:'p2', name:'Glow Salon & Spa', category:'Salons', rating:4.9, reviewCount:210, priceFrom:60, address:'88 Birch Ave, Austin, TX' },
+    p3: { id:'p3', name:'Sparkle Home Cleaners', category:'Cleaners', rating:4.7, reviewCount:98, priceFrom:80, address:'12 Oak Ln, Austin, TX' },
+    p4: { id:'p4', name:'ShineWorks Detailing', category:'Car Detailing', rating:4.6, reviewCount:64, priceFrom:120, address:'500 Cedar Rd, Austin, TX' },
+  };
+  categoryList = [
+    { id:'Barbers', mono:'BA' }, { id:'Salons', mono:'SA' },
+    { id:'Cleaners', mono:'CL' }, { id:'Car Detailing', mono:'CD' },
+  ];
+  servicesByProvider = {
+    p1: [ {id:'s1',name:'Classic Haircut',duration:'30 min',price:35}, {id:'s2',name:'Fade + Beard Trim',duration:'45 min',price:50}, {id:'s3',name:'Hot Towel Shave',duration:'25 min',price:30} ],
+    p2: [ {id:'s4',name:'Signature Blowout',duration:'40 min',price:60}, {id:'s5',name:'Deep Conditioning',duration:'50 min',price:75}, {id:'s6',name:'Full Color',duration:'2 hr',price:150} ],
+    p3: [ {id:'s7',name:'Standard Home Clean',duration:'2 hr',price:80}, {id:'s8',name:'Deep Clean',duration:'3 hr',price:130}, {id:'s9',name:'Move-out Clean',duration:'4 hr',price:180} ],
+    p4: [ {id:'s10',name:'Exterior Wash & Wax',duration:'1 hr',price:120}, {id:'s11',name:'Full Interior Detail',duration:'2 hr',price:180}, {id:'s12',name:'Ceramic Coating',duration:'4 hr',price:350} ],
+  };
+  timeSlotList = ['9:00 AM','10:00 AM','11:00 AM','1:00 PM','2:00 PM','3:00 PM','4:00 PM','5:00 PM'];
+
+  state = {
+    stack: ['signin'],
+    email: '', password: '',
+    signupName: '', signupEmail: '', signupPassword: '',
+    forgotEmail: '',
+    savedCards: [ {id:'c1',brand:'Visa',last4:'4242',isDefault:true}, {id:'c2',brand:'Mastercard',last4:'8891',isDefault:false} ],
+    settings: { push: true, email: true, promo: false },
+    selectedCategory: null,
+    selectedProviderId: null,
+    selectedServiceIds: [],
+    bookingDateIso: null,
+    bookingTime: null,
+    calendarView: (() => { const d = new Date(); return { year: d.getFullYear(), month: d.getMonth() }; })(),
+    paymentMethod: 'card',
+    lastBooking: null,
+    bookingsTab: 'all',
+    activeBookingId: null,
+    activeReviewProviderId: null,
+    reviewDraftRating: 0,
+    reviewDraftText: '',
+    chatProviderId: 'p1',
+    chatInput: '',
+    chatMessages: {
+      p1: [
+        { from:'them', text:'Hi! Thanks for booking with us.', time:'8:06 PM' },
+        { from:'me', text:'Looking forward to my appointment!', time:'8:36 PM' },
+        { from:'them', text:'See you tomorrow at 2 PM!', time:'9:06 PM' },
+      ],
+    },
+    notifications: [
+      { id:'n1', glyph:'📅', title:'Upcoming appointment', subtitle:'Fade + Beard Trim tomorrow at 2:00 PM', time:'1h ago', read:false, target:{type:'bookingDetail', id:'b1'} },
+      { id:'n2', glyph:'💬', title:'New message from Fade Masters', subtitle:'"See you tomorrow at 2 PM!"', time:'3h ago', read:false, target:{type:'chat', providerId:'p1'} },
+      { id:'n3', glyph:'★', title:'How was your visit?', subtitle:'Leave a review for Glow Salon & Spa', time:'1d ago', read:true, target:{type:'writeReview', providerId:'p2'} },
+      { id:'n4', glyph:'✓', title:'Booking cancelled', subtitle:'Exterior Wash & Wax was cancelled', time:'3d ago', read:true, target:{type:'bookingDetail', id:'b3'} },
+    ],
+    reviewsByProvider: {
+      p1: [ {id:'r1',author:'Jason M.',rating:5,text:'Best fade in town, always consistent.',date:'2 weeks ago'}, {id:'r2',author:'Marcus T.',rating:4,text:'Great atmosphere, slightly long wait.',date:'1 month ago'} ],
+      p2: [ {id:'r3',author:'Elena R.',rating:5,text:'My hair has never looked better!',date:'3 days ago'}, {id:'r4',author:'Priya S.',rating:5,text:'Lovely staff and relaxing space.',date:'2 weeks ago'} ],
+      p3: [ {id:'r5',author:'Tom H.',rating:4,text:'Thorough clean, arrived on time.',date:'1 week ago'} ],
+      p4: [ {id:'r6',author:'Nina B.',rating:5,text:'Car looks brand new. Worth every penny.',date:'5 days ago'} ],
+    },
+    bookings: [
+      { id:'b1', providerId:'p1', serviceName:'Fade + Beard Trim', dateTimeLabel:'Jul 18, 2026 · 2:00 PM', price:50, status:'upcoming' },
+      { id:'b2', providerId:'p2', serviceName:'Signature Blowout', dateTimeLabel:'Jun 30, 2026 · 11:00 AM', price:60, status:'completed' },
+      { id:'b3', providerId:'p4', serviceName:'Exterior Wash & Wax', dateTimeLabel:'Jun 20, 2026 · 9:00 AM', price:120, status:'cancelled' },
+    ],
+    toast: null,
+  };
+
+  screen() { return this.state.stack[this.state.stack.length - 1]; }
+  nav(s) { this.setState(x => ({ stack: [...x.stack, s] })); }
+  back = () => { this.setState(x => x.stack.length > 1 ? { stack: x.stack.slice(0, -1) } : x); };
+  resetTo(s) { this.setState({ stack: [s] }); }
+  showToast(msg) { this.setState({ toast: msg }); clearTimeout(this._t); this._t = setTimeout(() => this.setState({ toast: null }), 2000); }
+
+  goHome = () => this.resetTo('home');
+  goBookings = () => this.resetTo('bookings');
+  goChat = () => this.resetTo('chat');
+  goNotifications = () => this.resetTo('notifications');
+  goProfile = () => this.resetTo('profile');
+
+  selectCategory = (catId) => { this.setState({ selectedCategory: catId }); this.nav('category'); };
+  selectProvider = (id) => { this.setState({ selectedProviderId: id, selectedServiceIds: [] }); this.nav('provider'); };
+  toggleServiceSel = (id) => this.setState(s => ({
+    selectedServiceIds: s.selectedServiceIds.includes(id) ? s.selectedServiceIds.filter(x => x !== id) : [...s.selectedServiceIds, id],
+  }));
+  goBooking = () => {
+    if (!this.state.selectedServiceIds.length) { this.showToast('Select a service first'); return; }
+    this.nav('booking');
+  };
+  selectCalDay = (iso) => this.setState({ bookingDateIso: iso, bookingTime: null });
+  prevCalMonth = () => this.setState(s => {
+    const m = s.calendarView.month - 1, y = s.calendarView.year + (m < 0 ? -1 : 0);
+    return { calendarView: { year: y, month: (m + 12) % 12 } };
+  });
+  nextCalMonth = () => this.setState(s => {
+    const m = s.calendarView.month + 1, y = s.calendarView.year + (m > 11 ? 1 : 0);
+    return { calendarView: { year: y, month: m % 12 } };
+  });
+  buildCalendarMonth() {
+    const s = this.state;
+    const { year, month } = s.calendarView;
+    const first = new Date(year, month, 1);
+    const startWeekday = first.getDay();
+    const daysInMonth = new Date(year, month + 1, 0).getDate();
+    const today = new Date(); today.setHours(0, 0, 0, 0);
+    const cells = [];
+    for (let i = 0; i < startWeekday; i++) cells.push(null);
+    for (let d = 1; d <= daysInMonth; d++) {
+      const dateObj = new Date(year, month, d);
+      const iso = dateObj.toISOString().slice(0, 10);
+      cells.push({ num: d, iso, isPast: dateObj < today, isToday: dateObj.getTime() === today.getTime() });
+    }
+    while (cells.length % 7 !== 0) cells.push(null);
+    const weeks = [];
+    for (let i = 0; i < cells.length; i += 7) weeks.push(cells.slice(i, i + 7));
+    const canGoPrev = !(year === today.getFullYear() && month === today.getMonth());
+    return { monthLabel: first.toLocaleDateString('en-US', { month: 'long', year: 'numeric' }), weeks, canGoPrev };
+  }
+  selectTime = (t) => this.setState({ bookingTime: t });
+  goCheckout = () => {
+    if (!this.state.bookingDateIso || !this.state.bookingTime) { this.showToast('Pick a date and time'); return; }
+    this.nav('checkout');
+  };
+  setPaymentMethod = (m) => this.setState({ paymentMethod: m });
+  placeOrder = () => {
+    const s = this.state;
+    const provider = this.providers[s.selectedProviderId];
+    const services = this.servicesByProvider[s.selectedProviderId].filter(sv => s.selectedServiceIds.includes(sv.id));
+    const total = services.reduce((a, sv) => a + sv.price, 0);
+    const dateLabel = this.calDateLabelFromIso(s.bookingDateIso);
+    const booking = {
+      id: 'b' + Date.now(), providerId: s.selectedProviderId, providerName: provider.name,
+      serviceName: services.map(sv => sv.name).join(', '), dateTimeLabel: dateLabel + ' · ' + s.bookingTime,
+      price: total, status: 'upcoming',
+    };
+    this.setState(x => ({
+      bookings: [{ id: booking.id, providerId: booking.providerId, serviceName: booking.serviceName, dateTimeLabel: booking.dateTimeLabel, price: booking.price, status: 'upcoming' }, ...x.bookings],
+      lastBooking: booking, selectedServiceIds: [], bookingDateIso: null, bookingTime: null,
+    }));
+    this.nav('confirmation');
+  };
+  goHomeDone = () => this.resetTo('home');
+
+  setBookingsTab = (t) => this.setState({ bookingsTab: t });
+  openBookingDetail = (id) => { this.setState({ activeBookingId: id }); this.nav('bookingDetail'); };
+  cancelActiveBooking = () => {
+    this.setState(s => ({ bookings: s.bookings.map(b => b.id === s.activeBookingId ? { ...b, status: 'cancelled' } : b) }));
+    this.back();
+  };
+  bookAgainActive = () => {
+    const s = this.state;
+    const b = s.bookings.find(x => x.id === s.activeBookingId);
+    if (b) { this.setState({ selectedProviderId: b.providerId, selectedServiceIds: [] }); this.nav('provider'); }
+  };
+  messageActiveProvider = () => {
+    const s = this.state;
+    const b = s.bookings.find(x => x.id === s.activeBookingId);
+    if (b) { this.setState({ chatProviderId: b.providerId }); this.nav('chat'); }
+  };
+  startReviewForActive = () => {
+    const s = this.state;
+    const b = s.bookings.find(x => x.id === s.activeBookingId);
+    if (b) { this.setState({ activeReviewProviderId: b.providerId, reviewDraftRating: 0, reviewDraftText: '' }); this.nav('writeReview'); }
+  };
+  openReviews = () => this.nav('reviews');
+  startReviewForProvider = (providerId) => { this.setState({ activeReviewProviderId: providerId, reviewDraftRating: 0, reviewDraftText: '' }); this.nav('writeReview'); };
+  setReviewRating = (n) => this.setState({ reviewDraftRating: n });
+  setReviewText = (e) => this.setState({ reviewDraftText: e.target.value });
+  submitReview = () => {
+    const s = this.state;
+    if (!s.reviewDraftRating) { this.showToast('Pick a star rating'); return; }
+    const review = { id: 'r' + Date.now(), author: 'You', rating: s.reviewDraftRating, text: s.reviewDraftText || 'Great experience!', date: 'Just now' };
+    this.setState(x => ({ reviewsByProvider: { ...x.reviewsByProvider, [s.activeReviewProviderId]: [review, ...(x.reviewsByProvider[s.activeReviewProviderId] || [])] } }));
+    this.showToast('Review submitted');
+    this.back();
+  };
+
+  chatBack = () => { if (this.state.stack.length > 1) this.back(); else this.resetTo('home'); };
+  setChatInput = (e) => this.setState({ chatInput: e.target.value });
+  sendChat = () => {
+    const s = this.state;
+    const text = s.chatInput.trim();
+    if (!text) return;
+    const pid = s.chatProviderId;
+    this.setState(x => ({ chatMessages: { ...x.chatMessages, [pid]: [...(x.chatMessages[pid] || []), { from: 'me', text, time: 'Now' }] }, chatInput: '' }));
+    setTimeout(() => {
+      this.setState(x => ({ chatMessages: { ...x.chatMessages, [pid]: [...(x.chatMessages[pid] || []), { from: 'them', text: 'Got it, see you soon!', time: 'Now' }] } }));
+    }, 1100);
+  };
+
+  markNotifOpen = (n) => {
+    this.setState(s => ({ notifications: s.notifications.map(x => x.id === n.id ? { ...x, read: true } : x) }));
+    if (n.target.type === 'chat') { this.setState({ chatProviderId: n.target.providerId }); this.nav('chat'); }
+    else if (n.target.type === 'bookingDetail') { this.setState({ activeBookingId: n.target.id }); this.nav('bookingDetail'); }
+    else if (n.target.type === 'writeReview') { this.startReviewForProvider(n.target.providerId); }
+  };
+
+  profileSignOut = () => { this.setState({ email: '', password: '' }); this.resetTo('signin'); };
+  setEmail = (e) => this.setState({ email: e.target.value });
+  setPassword = (e) => this.setState({ password: e.target.value });
+  goSignup = () => this.resetTo('signup');
+  goSigninScreen = () => this.resetTo('signin');
+  signIn = () => {
+    if (!this.state.email.trim() || !this.state.password.trim()) { this.showToast('Enter email and password'); return; }
+    this.resetTo('home');
+  };
+  setSignupName = (e) => this.setState({ signupName: e.target.value });
+  setSignupEmail = (e) => this.setState({ signupEmail: e.target.value });
+  setSignupPassword = (e) => this.setState({ signupPassword: e.target.value });
+  signUp = () => {
+    if (!this.state.signupName.trim() || !this.state.signupEmail.trim() || !this.state.signupPassword.trim()) { this.showToast('Please fill in all fields'); return; }
+    this.setState({ email: this.state.signupEmail });
+    this.resetTo('home');
+    this.showToast('Account created');
+  };
+  goForgotPassword = () => this.nav('forgotPassword');
+  setForgotEmail = (e) => this.setState({ forgotEmail: e.target.value });
+  sendResetLink = () => {
+    if (!this.state.forgotEmail.trim()) { this.showToast('Enter your email'); return; }
+    this.showToast('Reset link sent to ' + this.state.forgotEmail);
+    this.resetTo('signin');
+  };
+  openPaymentMethods = () => this.nav('paymentMethods');
+  openSettings = () => this.nav('settings');
+  setDefaultCard = (id) => this.setState(s => ({ savedCards: s.savedCards.map(c => ({ ...c, isDefault: c.id === id })) }));
+  addCard = () => this.setState(s => ({ savedCards: [...s.savedCards, { id: 'c' + Date.now(), brand: 'Visa', last4: String(Math.floor(1000 + Math.random() * 9000)), isDefault: false }] }));
+  toggleSetting = (key) => this.setState(s => ({ settings: { ...s.settings, [key]: !s.settings[key] } }));
+  toggleSettingPush = () => this.toggleSetting('push');
+  toggleSettingEmail = () => this.toggleSetting('email');
+  toggleSettingPromo = () => this.toggleSetting('promo');
+
+  calDateLabelFromIso(iso) {
+    if (!iso) return '';
+    const d = new Date(iso + 'T00:00:00');
+    return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+  }
+
+  renderVals() {
+    const s = this.state;
+    const screen = this.screen();
+    const teal = '#17AEBF', ink = '#151A1E', gray = '#6B7580', border = '#E7EAEC', tealSoft = '#EAF7F9', tealDark = '#0E8695';
+
+    const navStyle = (active) => ({ padding: '9px 16px', borderRadius: 10, fontSize: 14, fontWeight: 600, cursor: 'pointer', color: active ? tealDark : gray, background: active ? tealSoft : 'transparent' });
+
+    const categories = this.categoryList.map(c => ({ ...c, onClick: () => this.selectCategory(c.id) }));
+
+    const heroSlideDefs = [
+      { eyebrow: 'BookFlow', title: 'Book your service in minutes', subtitle: 'Barbers, salons, cleaners & more', bg: 'linear-gradient(135deg,#17AEBF,#0E8695)' },
+      { eyebrow: 'Limited time', title: '20% off your first booking', subtitle: 'Use code WELCOME20 at checkout', bg: 'linear-gradient(135deg,#1B2229,#151A1E)' },
+      { eyebrow: 'Refer a friend', title: 'Give $10, get $10', subtitle: 'Share your code from Profile', bg: 'linear-gradient(135deg,#0E8695,#0B4E56)' },
+    ];
+    const heroSlides = heroSlideDefs.map(hs => ({ ...hs, style: { flex: '0 0 340px', scrollSnapAlign: 'start', borderRadius: 16, padding: 24, color: '#fff', background: hs.bg, boxSizing: 'border-box' } }));
+
+    const starsFor = (rating) => { const r = Math.round(rating); return Array.from({ length: 5 }, (_, i) => (i < r ? '★' : '☆')).join(''); };
+
+    const homeProviders = Object.values(this.providers).map(p => ({ ...p, ratingLabel: p.rating.toFixed(1), fromLabel: 'From $' + p.priceFrom, onClick: () => this.selectProvider(p.id) }));
+
+    const selectedCategory = s.selectedCategory;
+    const categoryProviders = Object.values(this.providers).filter(p => p.category === selectedCategory)
+      .map(p => ({ ...p, ratingFullLabel: p.rating.toFixed(1) + ' (' + p.reviewCount + ')', fromLabel: 'From $' + p.priceFrom, onClick: () => this.selectProvider(p.id) }));
+
+    const currentProvider = s.selectedProviderId ? {
+      ...this.providers[s.selectedProviderId],
+      ratingLabel: this.providers[s.selectedProviderId].rating.toFixed(1),
+      ratingFullLabel: this.providers[s.selectedProviderId].rating.toFixed(1) + ' (' + this.providers[s.selectedProviderId].reviewCount + ' reviews)',
+      reviewCountLabel: this.providers[s.selectedProviderId].reviewCount + ' reviews',
+    } : { name: '', address: '', ratingLabel: '', ratingFullLabel: '', reviewCountLabel: '' };
+
+    const providerGallery = ['Photo 1', 'Photo 2', 'Photo 3'].map(label => ({ label }));
+
+    const currentServices = (s.selectedProviderId ? this.servicesByProvider[s.selectedProviderId] : []).map(sv => {
+      const selected = s.selectedServiceIds.includes(sv.id);
+      return {
+        ...sv, priceLabel: '$' + sv.price, onToggle: () => this.toggleServiceSel(sv.id),
+        rowStyle: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '14px 16px', border: '1.5px solid ' + (selected ? teal : border), background: selected ? tealSoft : '#fff', borderRadius: 12, cursor: 'pointer' },
+        checkStyle: { width: 20, height: 20, borderRadius: 10, background: selected ? teal : '#E7EAEC', display: 'flex', alignItems: 'center', justifyContent: 'center' },
+      };
+    });
+    const selectedServicesList = (s.selectedProviderId ? this.servicesByProvider[s.selectedProviderId] : []).filter(sv => s.selectedServiceIds.includes(sv.id)).map(sv => ({ ...sv, priceLabel: '$' + sv.price }));
+    const total = selectedServicesList.reduce((a, sv) => a + sv.price, 0);
+    const continueLabel = s.selectedServiceIds.length ? 'Continue · $' + total : 'Select a service to continue';
+
+    const calMonth = this.buildCalendarMonth();
+    const calWeekdayLabels = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
+    const calWeeks = calMonth.weeks.map((week, wi) => ({
+      key: wi,
+      days: week.map((c, di) => {
+        if (!c) return { key: wi + '-' + di, num: '', onClick: () => {}, style: { visibility: 'hidden', padding: '9px 0' } };
+        const selected = s.bookingDateIso === c.iso;
+        return {
+          key: c.iso, num: c.num, onClick: c.isPast ? () => {} : () => this.selectCalDay(c.iso),
+          style: {
+            textAlign: 'center', padding: '9px 0', borderRadius: 10, fontSize: 13.5, fontWeight: 600, cursor: c.isPast ? 'default' : 'pointer',
+            background: selected ? teal : 'transparent', color: c.isPast ? '#D5DADD' : (selected ? '#fff' : ink),
+            border: c.isToday && !selected ? '1.5px solid ' + teal : '1.5px solid transparent',
+          },
+        };
+      }),
+    }));
+    const calMonthLabel = calMonth.monthLabel;
+    const calMonthPrevStyle = { width: 32, height: 32, borderRadius: 16, background: '#F5F6F7', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: calMonth.canGoPrev ? 'pointer' : 'default', color: calMonth.canGoPrev ? ink : '#D5DADD' };
+    const hasSelectedDate = !!s.bookingDateIso;
+    const noSelectedDate = !hasSelectedDate;
+    const bookingProviderInitial = currentProvider.name ? currentProvider.name.charAt(0).toUpperCase() : 'P';
+    const bookingDurationLabel = (s.selectedProviderId ? this.servicesByProvider[s.selectedProviderId] : []).filter(sv => s.selectedServiceIds.includes(sv.id)).map(sv => sv.duration).join(' + ') || 'Select services';
+    const timeSlots = this.timeSlotList.map(t => {
+      const selected = s.bookingTime === t;
+      return { label: t, onClick: () => this.selectTime(t), style: { padding: '13px 16px', borderRadius: 10, fontSize: 14, fontWeight: 600, textAlign: 'center', cursor: 'pointer', border: '1.5px solid ' + (selected ? teal : '#E7EAEC'), background: selected ? teal : '#fff', color: selected ? '#fff' : ink } };
+    });
+
+    const bookingWhenLabel = (s.bookingDateIso ? this.calDateLabelFromIso(s.bookingDateIso) : '') + (s.bookingTime ? ' · ' + s.bookingTime : '');
+    const totalLabel = '$' + total;
+
+    const cardIcon = '<svg width="20" height="14" viewBox="0 0 22 16"><rect x="1" y="1" width="20" height="14" rx="2" fill="none" stroke="#635BFF" stroke-width="1.5"></rect><line x1="1" y1="6" x2="21" y2="6" stroke="#635BFF" stroke-width="1.5"></line></svg>';
+    const applePayIcon = '<svg width="18" height="14" viewBox="0 0 22 16"><rect x="1" y="1" width="20" height="14" rx="2" fill="none" stroke="#151A1E" stroke-width="1.5"></rect><text x="11" y="11" font-size="6.5" font-weight="700" text-anchor="middle" fill="#151A1E"> Pay</text></svg>';
+    const cashIcon = '<svg width="18" height="14" viewBox="0 0 20 16"><rect x="1" y="1" width="18" height="14" rx="1.5" fill="none" stroke="#1E9E5A" stroke-width="1.5"></rect><circle cx="10" cy="8" r="2.6" fill="none" stroke="#1E9E5A" stroke-width="1.5"></circle></svg>';
+    const paymentOptions = [{ key: 'card', label: 'Credit / Debit Card', icon: cardIcon }, { key: 'apple', label: 'Apple Pay', icon: applePayIcon }, { key: 'cash', label: 'Pay with Cash', icon: cashIcon }].map(pm => {
+      const active = s.paymentMethod === pm.key;
+      return { ...pm, onClick: () => this.setPaymentMethod(pm.key),
+        dotOuter: { width: 20, height: 20, borderRadius: 10, border: '2px solid ' + (active ? '#635BFF' : '#C3C9CE'), display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 },
+        dotInner: { width: 10, height: 10, borderRadius: 5, background: active ? '#635BFF' : 'transparent' },
+        iconWrap: { display: 'flex', alignItems: 'center', flexShrink: 0 }, iconHtml: { __html: pm.icon } };
+    });
+
+    const lastBooking = s.lastBooking ? { ...s.lastBooking, priceLabel: '$' + s.lastBooking.price } : { providerName: '', serviceName: '', dateTimeLabel: '', priceLabel: '' };
+
+    const statusColors = { upcoming: teal, completed: '#1E9E5A', cancelled: '#D64545' };
+    const statusBg = { upcoming: tealSoft, completed: '#E9F8EF', cancelled: '#FBEAEA' };
+    const statusPillStyle = (status) => ({ display: 'inline-block', fontSize: 11.5, fontWeight: 700, padding: '5px 10px', borderRadius: 8, background: statusBg[status], color: statusColors[status], textTransform: 'capitalize', flexShrink: 0 });
+
+    const bookingsTabsDefs = [{ key: 'all', label: 'All' }, { key: 'upcoming', label: 'Upcoming' }, { key: 'completed', label: 'Completed' }, { key: 'cancelled', label: 'Cancelled' }];
+    const bookingsTabs = bookingsTabsDefs.map(tb => {
+      const active = s.bookingsTab === tb.key;
+      return { ...tb, onClick: () => this.setBookingsTab(tb.key), style: { padding: '9px 16px', borderRadius: 18, fontSize: 13.5, fontWeight: 700, cursor: 'pointer', background: active ? teal : '#F5F6F7', color: active ? '#fff' : gray } };
+    });
+    const filteredBookingsRaw = s.bookings.filter(b => s.bookingsTab === 'all' || b.status === s.bookingsTab);
+    const filteredBookings = filteredBookingsRaw.map(b => ({ ...b, providerName: this.providers[b.providerId] ? this.providers[b.providerId].name : '', statusLabel: b.status, statusStyle: statusPillStyle(b.status), onClick: () => this.openBookingDetail(b.id) }));
+    const noBookingsInTab = filteredBookings.length === 0;
+
+    const activeBookingRaw = s.bookings.find(b => b.id === s.activeBookingId);
+    const activeBooking = activeBookingRaw ? {
+      ...activeBookingRaw, providerName: this.providers[activeBookingRaw.providerId] ? this.providers[activeBookingRaw.providerId].name : '',
+      statusLabel: activeBookingRaw.status, statusStyle: statusPillStyle(activeBookingRaw.status), priceLabel: '$' + activeBookingRaw.price,
+      isUpcoming: activeBookingRaw.status === 'upcoming', isCompleted: activeBookingRaw.status === 'completed', isCancelled: activeBookingRaw.status === 'cancelled',
+    } : { providerName: '', serviceName: '', dateTimeLabel: '', priceLabel: '', statusLabel: '', statusStyle: {}, isUpcoming: false, isCompleted: false, isCancelled: false };
+
+    const chatProviderName = this.providers[s.chatProviderId] ? this.providers[s.chatProviderId].name : 'Chat';
+    const chatMessagesList = (s.chatMessages[s.chatProviderId] || []).map((m, i) => ({
+      key: i, text: m.text, time: m.time,
+      rowStyle: { display: 'flex', flexDirection: 'column', alignItems: m.from === 'me' ? 'flex-end' : 'flex-start' },
+      bubbleStyle: { maxWidth: '60%', padding: '12px 16px', borderRadius: 16, fontSize: 14.5, lineHeight: 1.4, background: m.from === 'me' ? teal : '#F5F6F7', color: m.from === 'me' ? '#fff' : ink },
+      timeStyle: { fontSize: 11.5, color: '#9AA5AC', marginTop: 4 },
+    }));
+
+    const notificationsList = s.notifications.map(n => ({ ...n, onClick: () => this.markNotifOpen(n), dotStyle: { width: 8, height: 8, borderRadius: 4, background: n.read ? 'transparent' : teal, marginTop: 6, flexShrink: 0 } }));
+
+    const currentReviews = (s.reviewsByProvider[s.selectedProviderId] || []).map(r => ({ ...r, starsLabel: starsFor(r.rating) }));
+
+    const reviewTargetName = this.providers[s.activeReviewProviderId] ? this.providers[s.activeReviewProviderId].name : '';
+    const reviewStars = [1, 2, 3, 4, 5].map(n => ({ n, onClick: () => this.setReviewRating(n), style: { fontSize: 38, cursor: 'pointer', color: n <= s.reviewDraftRating ? '#DE9A34' : '#E7EAEC' } }));
+    const submitReviewStyle = { width: '100%', padding: 16, background: s.reviewDraftRating ? teal : '#C3C9CE', color: '#fff', borderRadius: 12, fontSize: 15.5, fontWeight: 700, textAlign: 'center', cursor: 'pointer', marginTop: 20, boxSizing: 'border-box' };
+
+    const profileMenu = [
+      { label: 'My Bookings', color: ink, onClick: () => this.resetTo('bookings') },
+      { label: 'Chat', color: ink, onClick: () => this.resetTo('chat') },
+      { label: 'Notifications', color: ink, onClick: () => this.resetTo('notifications') },
+      { label: 'Payment Methods', color: ink, onClick: this.openPaymentMethods },
+      { label: 'Settings', color: ink, onClick: this.openSettings },
+      { label: 'Sign Out', color: '#D64545', onClick: this.profileSignOut },
+    ];
+    const brandCodes = { Visa: 'VISA', Mastercard: 'MC' };
+    const paymentCardsList = s.savedCards.map(c => ({
+      ...c, brandCode: brandCodes[c.brand] || c.brand.slice(0, 4).toUpperCase(),
+      onSetDefault: () => this.setDefaultCard(c.id),
+      badgeStyle: { fontSize: 11, fontWeight: 700, padding: '4px 9px', borderRadius: 8, background: c.isDefault ? tealSoft : '#F5F6F7', color: c.isDefault ? tealDark : gray, cursor: c.isDefault ? 'default' : 'pointer' },
+      badgeLabel: c.isDefault ? 'Default' : 'Make Default',
+    }));
+    const toggleTrackStyle = (on) => ({ width: 44, height: 26, borderRadius: 13, background: on ? teal : '#E7EAEC', position: 'relative', cursor: 'pointer', flexShrink: 0 });
+    const toggleKnobStyle = (on) => ({ width: 20, height: 20, borderRadius: 10, background: '#fff', position: 'absolute', top: 3, left: on ? 21 : 3, boxShadow: '0 1px 3px rgba(0,0,0,0.2)', pointerEvents: 'none' });
+
+    const hasUnreadNotif = s.notifications.some(n => !n.read);
+
+    return {
+      devW: 1440, devH: 900,
+      isHome: screen === 'home', isCategory: screen === 'category', isProvider: screen === 'provider', isBooking: screen === 'booking',
+      isCheckout: screen === 'checkout', isConfirmation: screen === 'confirmation', isBookings: screen === 'bookings', isBookingDetail: screen === 'bookingDetail',
+      isChat: screen === 'chat', isNotifications: screen === 'notifications', isReviews: screen === 'reviews', isWriteReview: screen === 'writeReview', isProfile: screen === 'profile',
+      isSignin: screen === 'signin', isSignup: screen === 'signup', isForgotPassword: screen === 'forgotPassword',
+      isPaymentMethods: screen === 'paymentMethods', isSettings: screen === 'settings',
+      isAuthed: screen !== 'signin' && screen !== 'signup' && screen !== 'forgotPassword',
+      email: s.email, setEmail: this.setEmail, password: s.password, setPassword: this.setPassword, signIn: this.signIn,
+      goSignup: this.goSignup, goSigninScreen: this.goSigninScreen, goForgotPassword: this.goForgotPassword,
+      signupName: s.signupName, setSignupName: this.setSignupName, signupEmail: s.signupEmail, setSignupEmail: this.setSignupEmail,
+      signupPassword: s.signupPassword, setSignupPassword: this.setSignupPassword, signUp: this.signUp,
+      forgotEmail: s.forgotEmail, setForgotEmail: this.setForgotEmail, sendResetLink: this.sendResetLink,
+      paymentCardsList, addCard: this.addCard, openPaymentMethods: this.openPaymentMethods, openSettings: this.openSettings,
+      toggleSettingPush: this.toggleSettingPush, toggleSettingEmail: this.toggleSettingEmail, toggleSettingPromo: this.toggleSettingPromo,
+      settingPushTrackStyle: toggleTrackStyle(s.settings.push), settingPushKnobStyle: toggleKnobStyle(s.settings.push),
+      settingEmailTrackStyle: toggleTrackStyle(s.settings.email), settingEmailKnobStyle: toggleKnobStyle(s.settings.email),
+      settingPromoTrackStyle: toggleTrackStyle(s.settings.promo), settingPromoKnobStyle: toggleKnobStyle(s.settings.promo),
+      goHome: this.goHome, goBookings: this.goBookings, goChat: this.goChat, goNotifications: this.goNotifications, goProfile: this.goProfile,
+      navHomeStyle: navStyle(screen === 'home' || screen === 'category' || screen === 'provider' || screen === 'booking' || screen === 'checkout' || screen === 'confirmation'),
+      navBookingsStyle: navStyle(screen === 'bookings' || screen === 'bookingDetail'), navChatStyle: navStyle(screen === 'chat'),
+      hasUnreadNotif, userInitial: 'G',
+      categories, heroSlides, homeProviders,
+      selectedCategory, categoryProviders, back: this.back,
+      currentProvider, providerGallery, currentServices, continueLabel, goBooking: this.goBooking, openReviews: this.openReviews,
+      calWeekdayLabels, calWeeks, calMonthLabel, calMonthPrevStyle, prevCalMonth: this.prevCalMonth, nextCalMonth: this.nextCalMonth,
+      hasSelectedDate, noSelectedDate, bookingProviderInitial, bookingDurationLabel,
+      timeSlots, goCheckout: this.goCheckout,
+      selectedServicesList, totalLabel, bookingWhenLabel, paymentOptions, placeOrder: this.placeOrder,
+      lastBooking, goHomeDone: this.goHomeDone,
+      bookingsTabs, filteredBookings, noBookingsInTab,
+      activeBooking, messageActiveProvider: this.messageActiveProvider, cancelActiveBooking: this.cancelActiveBooking, startReviewForActive: this.startReviewForActive, bookAgainActive: this.bookAgainActive,
+      chatProviderName, chatMessagesList, chatInput: s.chatInput, setChatInput: this.setChatInput, sendChat: this.sendChat, chatBack: this.chatBack,
+      notificationsList,
+      currentReviews,
+      reviewTargetName, reviewStars, reviewDraftText: s.reviewDraftText, setReviewText: this.setReviewText, submitReview: this.submitReview, submitReviewStyle,
+      profileName: s.signupName || 'Guest User', profileEmail: s.email || 'guest@bookflow.app', profileMenu,
+      hasToast: !!s.toast, toast: s.toast,
+    };
+  }
+}
+
+</script>
+</body>
+</html>

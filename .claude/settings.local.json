@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(curl -sL https://api.github.com/repos/cli/cli/releases/latest)",
+      "Bash(curl -sL https://api.github.com/repos/cli/cli/releases/latest -o /private/tmp/claude-501/-Users-ben-Desktop-design-handoff-bookflow/80675fe2-70b0-4539-bd86-45115508ff24/scratchpad/release.json)",
+      "Bash(curl -sL -o gh.zip https://github.com/cli/cli/releases/download/v2.96.0/gh_2.96.0_macOS_arm64.zip)",
+      "Bash(unzip -q gh.zip)"
+    ]
+  }
+}

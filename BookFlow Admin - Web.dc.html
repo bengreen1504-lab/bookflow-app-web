@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>body{margin:0;background:#EDEFF1}[data-hscroll]::-webkit-scrollbar{display:none}[data-hscroll]{scrollbar-width:none}</style>
+</helmet>
+<div style="display:flex;justify-content:center;padding:40px 20px;">
+<x-import component-from-global-scope="ChromeWindow" from="./browser-window.jsx" width="{{ devW }}" height="{{ devH }}" url="app.bookflow.com/dashboard" hint-size="1440,900">
+<div style="height:100%;display:flex;background:#fff;font-family:-apple-system,system-ui,sans-serif;">
+
+<sc-if value="{{ showLogin }}" hint-placeholder-val="{{ false }}">
+<div style="width:100%;display:flex;align-items:center;justify-content:center;">
+<div style="width:380px;display:flex;flex-direction:column;align-items:center;">
+<img src="./bookflow-logo-cropped.png" alt="BookFlow" style="height:44px;width:auto;margin-bottom:28px;">
+<div style="width:100%;text-align:center;margin-bottom:24px;">
+<div style="font-size:24px;font-weight:800;color:#151A1E;">Business Sign In</div>
+<div style="font-size:14px;color:#6B7580;margin-top:4px;">Sign in to manage {{ businessProfile.name }}</div>
+</div>
+<div style="width:100%;display:flex;flex-direction:column;gap:14px;">
+<input type="email" placeholder="Email" value="{{ loginEmail }}" onChange="{{ setLoginEmail }}" style="width:100%;padding:14px;border:1.5px solid #E7EAEC;border-radius:12px;font-size:15px;box-sizing:border-box;outline:none;color:#151A1E;">
+<input type="password" placeholder="Password" value="{{ loginPassword }}" onChange="{{ setLoginPassword }}" style="width:100%;padding:14px;border:1.5px solid #E7EAEC;border-radius:12px;font-size:15px;box-sizing:border-box;outline:none;color:#151A1E;">
+<div onClick="{{ signIn }}" style="width:100%;padding:15px;background:#17AEBF;color:#fff;border-radius:12px;font-size:15.5px;font-weight:700;text-align:center;cursor:pointer;box-sizing:border-box;">Sign In</div>
+</div>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ isDashboard }}" hint-placeholder-val="{{ true }}">
+<div style="width:232px;flex-shrink:0;border-right:1px solid #E7EAEC;display:flex;flex-direction:column;padding:24px 16px;box-sizing:border-box;">
+<img src="./bookflow-logo-cropped.png" alt="BookFlow" style="height:26px;width:auto;display:block;margin:0 8px 4px;">
+<div style="font-size:12px;color:#6B7580;margin:2px 8px 22px;">{{ businessProfile.name }}</div>
+<div style="display:flex;flex-direction:column;gap:2px;flex:1;">
+<div onClick="{{ goOverview }}" style="{{ navOverviewStyle }}">
+<svg width="16" height="15" viewBox="0 0 22 20"><path d="M11 1l10 8v10h-7v-7H8v7H1V9z" fill="currentColor"></path></svg>
+<span>Overview</span>
+</div>
+<div onClick="{{ goCalendarPage }}" style="{{ navCalendarStyle }}">
+<svg width="15" height="14" viewBox="0 0 18 17"><rect x="1" y="3" width="16" height="13" rx="2" fill="none" stroke="currentColor" stroke-width="1.6"></rect><line x1="1" y1="7" x2="17" y2="7" stroke="currentColor" stroke-width="1.6"></line><line x1="5" y1="1" x2="5" y2="4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"></line><line x1="13" y1="1" x2="13" y2="4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"></line></svg>
+<span>Calendar</span>
+</div>
+<div onClick="{{ goBookingsPage }}" style="{{ navBookingsStyle }}">
+<svg width="15" height="14" viewBox="0 0 20 19"><rect x="1" y="2" width="18" height="16" rx="2.5" fill="none" stroke="currentColor" stroke-width="1.7"></rect><line x1="1" y1="7" x2="19" y2="7" stroke="currentColor" stroke-width="1.7"></line></svg>
+<span>Bookings</span>
+</div>
+<div onClick="{{ goClientsPage }}" style="{{ navClientsStyle }}">
+<svg width="16" height="13" viewBox="0 0 20 16"><circle cx="7" cy="5" r="3" fill="none" stroke="currentColor" stroke-width="1.6"></circle><circle cx="14.5" cy="6.5" r="2.4" fill="none" stroke="currentColor" stroke-width="1.6"></circle><path d="M1 15c0-3.5 2.7-6 6-6s6 2.5 6 6" fill="none" stroke="currentColor" stroke-width="1.6"></path><path d="M13 10c2.5 0 5 1.8 5 5" fill="none" stroke="currentColor" stroke-width="1.6"></path></svg>
+<span>Clients</span>
+</div>
+<div onClick="{{ goPOSPage }}" style="{{ navPOSStyle }}">
+<svg width="16" height="14" viewBox="0 0 20 18"><path d="M1 2h2l2.2 11h10.4l1.8-7H5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></path><circle cx="7" cy="16" r="1.3" fill="currentColor"></circle><circle cx="14.5" cy="16" r="1.3" fill="currentColor"></circle></svg>
+<span>Point of Sale</span>
+</div>
+<div onClick="{{ goServicesPage }}" style="{{ navServicesStyle }}">
+<svg width="15" height="13" viewBox="0 0 18 16"><rect x="1" y="1" width="16" height="14" rx="2" fill="none" stroke="currentColor" stroke-width="1.6"></rect><line x1="1" y1="7" x2="17" y2="7" stroke="currentColor" stroke-width="1.6"></line></svg>
+<span>Manage Services</span>
+</div>
+<div onClick="{{ goStaffPage }}" style="{{ navStaffStyle }}">
+<svg width="16" height="13" viewBox="0 0 20 16"><circle cx="7" cy="5" r="3" fill="none" stroke="currentColor" stroke-width="1.6"></circle><circle cx="14.5" cy="6.5" r="2.4" fill="none" stroke="currentColor" stroke-width="1.6"></circle><path d="M1 15c0-3.5 2.7-6 6-6s6 2.5 6 6" fill="none" stroke="currentColor" stroke-width="1.6"></path></svg>
+<span>Staff</span>
+</div>
+<div onClick="{{ goAnalyticsPage }}" style="{{ navAnalyticsStyle }}">
+<svg width="16" height="14" viewBox="0 0 20 17"><path d="M1 16V9m6 7V1m6 15v-6m6 6V5" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"></path></svg>
+<span>Analytics</span>
+</div>
+<div onClick="{{ goBizProfilePage }}" style="{{ navProfileStyle }}">
+<svg width="15" height="14" viewBox="0 0 18 17"><rect x="1" y="5" width="16" height="11" rx="1.5" fill="none" stroke="currentColor" stroke-width="1.6"></rect><rect x="6" y="1" width="6" height="4" rx="1" fill="none" stroke="currentColor" stroke-width="1.6"></rect></svg>
+<span>Business Profile</span>
+</div>
+</div>
+<div onClick="{{ signOut }}" style="display:flex;align-items:center;gap:10px;padding:10px 10px;border-radius:10px;cursor:pointer;color:#D64545;font-size:13.5px;font-weight:600;">
+<svg width="15" height="14" viewBox="0 0 18 16"><rect x="1" y="1" width="8" height="14" rx="1.5" fill="none" stroke="#D64545" stroke-width="1.5"></rect><path d="M10 8h7m0 0l-2.5-2.5M17 8l-2.5 2.5" fill="none" stroke="#D64545" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+Sign Out
+</div>
+</div>
+
+<div style="flex:1;min-width:0;overflow:auto;padding:32px 40px;box-sizing:border-box;">
+<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:28px;">
+<div style="font-size:24px;font-weight:800;color:#151A1E;">{{ pageTitle }}</div>
+<div style="display:flex;align-items:center;gap:12px;">
+<div style="background:#F5F6F7;border-radius:10px;padding:9px 14px;font-size:13.5px;font-weight:700;color:#151A1E;">{{ earningsLabel }} earned</div>
+<div style="width:36px;height:36px;border-radius:18px;background:#151A1E;color:#fff;font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:center;">FM</div>
+</div>
+</div>
+
+<sc-if value="{{ isOverview }}" hint-placeholder-val="{{ true }}">
+<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:24px;">
+<sc-for list="{{ statCards }}" as="sc" hint-placeholder-count="4">
+<div style="border:1px solid #E7EAEC;border-radius:14px;padding:18px;">
+<div style="font-size:12.5px;color:#6B7580;font-weight:600;">{{ sc.label }}</div>
+<div style="font-size:24px;font-weight:800;color:#151A1E;margin-top:6px;">{{ sc.value }}</div>
+</div>
+</sc-for>
+</div>
+<div style="border:1px solid #E7EAEC;border-radius:14px;padding:20px;margin-bottom:24px;">
+<div style="font-size:13px;font-weight:700;color:#6B7580;margin-bottom:14px;">Revenue · Last 7 Days</div>
+<div style="display:grid;grid-template-columns:repeat(7,1fr);gap:10px;align-items:end;height:120px;">
+<sc-for list="{{ revenueBars }}" as="rb" hint-placeholder-count="7">
+<div style="{{ rb.barStyle }}"></div>
+</sc-for>
+</div>
+<div style="display:grid;grid-template-columns:repeat(7,1fr);gap:10px;margin-top:6px;">
+<sc-for list="{{ revenueBars }}" as="rb" hint-placeholder-count="7">
+<div style="text-align:center;font-size:11.5px;color:#9AA5AC;">{{ rb.day }}</div>
+</sc-for>
+</div>
+</div>
+<div style="font-size:13px;font-weight:700;color:#6B7580;margin-bottom:12px;">Recent Bookings</div>
+<div style="border:1px solid #E7EAEC;border-radius:14px;overflow:hidden;">
+<div style="display:grid;grid-template-columns:1.4fr 1.6fr 1fr 0.8fr 0.7fr 0.9fr;padding:12px 16px;background:#F5F6F7;font-size:12px;font-weight:700;color:#6B7580;">
+<span>Customer</span><span>Service</span><span>Date</span><span>Time</span><span>Price</span><span>Status</span>
+</div>
+<sc-for list="{{ recentBookingsList }}" as="b" hint-placeholder-count="5">
+<div style-hover="background:#FAFBFB" style="display:grid;grid-template-columns:1.4fr 1.6fr 1fr 0.8fr 0.7fr 0.9fr;padding:13px 16px;border-top:1px solid #E7EAEC;font-size:13.5px;color:#151A1E;align-items:center;">
+<span>{{ b.customerName }}</span><span>{{ b.service }}</span><span>{{ b.date }}</span><span>{{ b.time }}</span><span>{{ b.priceLabel }}</span><span style="{{ b.statusStyle }}">{{ b.statusLabel }}</span>
+</div>
+</sc-for>
+</div>
+</sc-if>
+
+<sc-if value="{{ isBookingsPage }}" hint-placeholder-val="{{ false }}">
+<div style="display:flex;gap:8px;margin-bottom:18px;">
+<sc-for list="{{ bookingsTabs }}" as="tb" hint-placeholder-count="4">
+<div onClick="{{ tb.onClick }}" style="{{ tb.style }}">{{ tb.label }}</div>
+</sc-for>
+</div>
+<div style="border:1px solid #E7EAEC;border-radius:14px;overflow:hidden;">
+<div style="display:grid;grid-template-columns:1.4fr 1.6fr 1fr 0.8fr 0.7fr 0.9fr;padding:12px 16px;background:#F5F6F7;font-size:12px;font-weight:700;color:#6B7580;">
+<span>Customer</span><span>Service</span><span>Date</span><span>Time</span><span>Price</span><span>Status</span>
+</div>
+<sc-for list="{{ filteredAdminBookings }}" as="b" hint-placeholder-count="6">
+<div style-hover="background:#FAFBFB" style="display:grid;grid-template-columns:1.4fr 1.6fr 1fr 0.8fr 0.7fr 0.9fr;padding:13px 16px;border-top:1px solid #E7EAEC;font-size:13.5px;color:#151A1E;align-items:center;">
+<span>{{ b.customerName }}</span><span>{{ b.service }}</span><span>{{ b.date }}</span><span>{{ b.time }}</span><span>{{ b.priceLabel }}</span><span style="{{ b.statusStyle }}">{{ b.statusLabel }}</span>
+</div>
+</sc-for>
+<sc-if value="{{ noAdminBookingsInTab }}" hint-placeholder-val="{{ false }}">
+<div style="text-align:center;color:#9AA5AC;font-size:13.5px;padding:32px 0;">No bookings here.</div>
+</sc-if>
+</div>
+</sc-if>
+
+<sc-if value="{{ isPOSPage }}" hint-placeholder-val="{{ false }}">
+<div style="display:grid;grid-template-columns:1.4fr 1fr;gap:24px;align-items:start;">
+<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;">
+<sc-for list="{{ posServiceButtons }}" as="sv" hint-placeholder-count="4">
+<div onClick="{{ sv.onClick }}" style-hover="border-color:#17AEBF" style="border:1.5px solid #E7EAEC;border-radius:12px;padding:16px;cursor:pointer;">
+<div style="font-size:14px;font-weight:700;color:#151A1E;">{{ sv.name }}</div>
+<div style="font-size:13px;color:#0E8695;font-weight:700;margin-top:6px;">{{ sv.priceLabel }}</div>
+</div>
+</sc-for>
+</div>
+<div style="border:1px solid #E7EAEC;border-radius:14px;padding:18px;">
+<div style="font-size:13px;font-weight:700;color:#6B7580;margin-bottom:12px;">Cart</div>
+<div style="display:flex;flex-direction:column;gap:10px;margin-bottom:16px;min-height:24px;">
+<sc-for list="{{ posCartItems }}" as="c" hint-placeholder-count="2">
+<div style="display:flex;justify-content:space-between;align-items:center;">
+<div style="font-size:13.5px;color:#151A1E;">{{ c.name }} × {{ c.qtyLabel }}</div>
+<div style="display:flex;align-items:center;gap:10px;">
+<div style="font-size:13.5px;font-weight:700;color:#151A1E;">{{ c.subtotalLabel }}</div>
+<span onClick="{{ c.onRemove }}" style="color:#D64545;font-size:12.5px;cursor:pointer;">Remove</span>
+</div>
+</div>
+</sc-for>
+<sc-if value="{{ posCartEmpty }}" hint-placeholder-val="{{ true }}">
+<div style="color:#9AA5AC;font-size:13px;">Click a service to add it.</div>
+</sc-if>
+</div>
+<div style="font-size:12px;font-weight:700;color:#6B7580;margin-bottom:8px;">Payment Method · <span style="color:#635BFF;font-weight:700;">Stripe</span></div>
+<div style="display:flex;gap:6px;margin-bottom:14px;">
+<sc-for list="{{ posMethodOptions }}" as="pm" hint-placeholder-count="3">
+<div onClick="{{ pm.onClick }}" style="{{ pm.style }}">{{ pm.label }}</div>
+</sc-for>
+</div>
+<div style="display:flex;justify-content:space-between;font-size:16px;font-weight:800;color:#151A1E;border-top:1px solid #E7EAEC;padding-top:14px;margin-bottom:14px;">
+<span>Total</span><span>{{ posTotalLabel }}</span>
+</div>
+<div onClick="{{ chargePos }}" style="width:100%;padding:14px;background:#17AEBF;color:#fff;border-radius:10px;font-size:14.5px;font-weight:700;text-align:center;cursor:pointer;box-sizing:border-box;">Charge {{ posTotalLabel }}</div>
+<div style="display:flex;align-items:center;justify-content:center;gap:6px;margin-top:12px;color:#9AA5AC;font-size:11px;">
+<svg width="10" height="12" viewBox="0 0 12 14"><rect x="1" y="6" width="10" height="7" rx="1.5" fill="none" stroke="#9AA5AC" stroke-width="1.3"></rect><path d="M3 6V4a3 3 0 016 0v2" fill="none" stroke="#9AA5AC" stroke-width="1.3"></path></svg>
+<span>Payments secured by <b style="color:#635BFF;">Stripe</b></span>
+</div>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ isServicesPage }}" hint-placeholder-val="{{ false }}">
+<div style="border:1px solid #E7EAEC;border-radius:14px;overflow:hidden;margin-bottom:16px;">
+<div style="display:grid;grid-template-columns:2fr 1fr 1fr 0.6fr;padding:12px 16px;background:#F5F6F7;font-size:12px;font-weight:700;color:#6B7580;">
+<span>Service</span><span>Duration</span><span>Price</span><span></span>
+</div>
+<sc-for list="{{ adminServicesList }}" as="sv" hint-placeholder-count="3">
+<div style="display:grid;grid-template-columns:2fr 1fr 1fr 0.6fr;padding:10px 16px;border-top:1px solid #E7EAEC;align-items:center;gap:8px;">
+<input type="text" value="{{ sv.name }}" onChange="{{ sv.onNameChange }}" style="border:none;font-size:13.5px;font-weight:600;color:#151A1E;outline:none;padding:6px 0;">
+<input type="text" value="{{ sv.duration }}" onChange="{{ sv.onDurationChange }}" style="border:1px solid #E7EAEC;border-radius:8px;font-size:12.5px;outline:none;padding:7px 9px;width:80px;color:#151A1E;">
+<input type="number" value="{{ sv.price }}" onChange="{{ sv.onPriceChange }}" style="border:1px solid #E7EAEC;border-radius:8px;font-size:12.5px;outline:none;padding:7px 9px;width:70px;color:#151A1E;">
+<span onClick="{{ sv.onRemove }}" style="color:#D64545;font-size:12.5px;cursor:pointer;">Remove</span>
+</div>
+</sc-for>
+</div>
+<div onClick="{{ addService }}" style="display:inline-block;padding:12px 20px;background:#EAF7F9;color:#0E8695;border-radius:10px;font-size:13.5px;font-weight:700;cursor:pointer;">+ Add Service</div>
+</sc-if>
+
+<sc-if value="{{ isStaffPage }}" hint-placeholder-val="{{ false }}">
+<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:16px;">
+<sc-for list="{{ staffList }}" as="st" hint-placeholder-count="3">
+<div style="border:1px solid #E7EAEC;border-radius:14px;padding:16px;">
+<div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
+<div style="width:38px;height:38px;border-radius:19px;background:#E9F8EF;color:#1E9E5A;font-weight:800;font-size:13px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">{{ st.initial }}</div>
+<span onClick="{{ st.onRemove }}" style="margin-left:auto;color:#D64545;font-size:12px;cursor:pointer;">Remove</span>
+</div>
+<input type="text" value="{{ st.name }}" onChange="{{ st.onNameChange }}" style="width:100%;border:none;font-size:14px;font-weight:700;color:#151A1E;outline:none;padding:0;margin-bottom:4px;box-sizing:border-box;">
+<input type="text" value="{{ st.role }}" onChange="{{ st.onRoleChange }}" style="width:100%;border:none;font-size:12.5px;color:#6B7580;outline:none;padding:0;box-sizing:border-box;">
+</div>
+</sc-for>
+</div>
+<div onClick="{{ addStaff }}" style="display:inline-block;padding:12px 20px;background:#EAF7F9;color:#0E8695;border-radius:10px;font-size:13.5px;font-weight:700;cursor:pointer;">+ Invite Staff</div>
+</sc-if>
+
+<sc-if value="{{ isBizProfilePage }}" hint-placeholder-val="{{ false }}">
+<div style="max-width:520px;display:flex;flex-direction:column;gap:16px;">
+<div>
+<div style="font-size:12.5px;font-weight:700;color:#6B7580;margin-bottom:6px;">Business Name</div>
+<input type="text" value="{{ businessProfile.name }}" onChange="{{ setBizName }}" style="width:100%;padding:12px;border:1.5px solid #E7EAEC;border-radius:10px;font-size:14px;outline:none;box-sizing:border-box;color:#151A1E;">
+</div>
+<div>
+<div style="font-size:12.5px;font-weight:700;color:#6B7580;margin-bottom:6px;">Address</div>
+<input type="text" value="{{ businessProfile.address }}" onChange="{{ setBizAddress }}" style="width:100%;padding:12px;border:1.5px solid #E7EAEC;border-radius:10px;font-size:14px;outline:none;box-sizing:border-box;color:#151A1E;">
+</div>
+<div>
+<div style="font-size:12.5px;font-weight:700;color:#6B7580;margin-bottom:6px;">Hours</div>
+<input type="text" value="{{ businessProfile.hours }}" onChange="{{ setBizHours }}" style="width:100%;padding:12px;border:1.5px solid #E7EAEC;border-radius:10px;font-size:14px;outline:none;box-sizing:border-box;color:#151A1E;">
+</div>
+<div onClick="{{ saveBizProfile }}" style="width:160px;padding:13px;background:#17AEBF;color:#fff;border-radius:10px;font-size:14px;font-weight:700;text-align:center;cursor:pointer;">Save Changes</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ isCalendarPage }}" hint-placeholder-val="{{ false }}">
+<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;">
+<div style="font-size:15.5px;font-weight:800;color:#151A1E;">{{ calWeekRangeLabel }}</div>
+<div style="display:flex;gap:8px;">
+<div onClick="{{ prevCalWeek }}" style="width:32px;height:32px;border-radius:8px;background:#F5F6F7;display:flex;align-items:center;justify-content:center;cursor:pointer;"><svg width="8" height="13" viewBox="0 0 9 14"><path d="M8 1L2 7l6 6" fill="none" stroke="#151A1E" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path></svg></div>
+<div onClick="{{ nextCalWeek }}" style="width:32px;height:32px;border-radius:8px;background:#F5F6F7;display:flex;align-items:center;justify-content:center;cursor:pointer;"><svg width="8" height="13" viewBox="0 0 9 14"><path d="M1 1l6 6-6 6" fill="none" stroke="#151A1E" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path></svg></div>
+</div>
+</div>
+<div style="border:1px solid #E7EAEC;border-radius:14px;overflow:hidden;">
+<div style="display:grid;grid-template-columns:70px repeat(7,1fr);border-bottom:1px solid #E7EAEC;">
+<div></div>
+<sc-for list="{{ calWeekDays }}" as="wd" hint-placeholder-count="7">
+<div style="padding:10px 6px;text-align:center;border-left:1px solid #E7EAEC;">
+<div style="font-size:11px;color:#9AA5AC;font-weight:700;">{{ wd.label }}</div>
+<div style="font-size:14px;font-weight:800;color:#151A1E;margin-top:2px;">{{ wd.num }}</div>
+</div>
+</sc-for>
+</div>
+<sc-for list="{{ calHourRows }}" as="hr" hint-placeholder-count="9">
+<div style="display:grid;grid-template-columns:70px repeat(7,1fr);border-bottom:1px solid #F0F2F3;min-height:52px;">
+<div style="padding:6px 10px;font-size:11px;color:#9AA5AC;text-align:right;">{{ hr.label }}</div>
+<sc-for list="{{ hr.cells }}" as="cell" hint-placeholder-count="7">
+<div style="padding:3px;border-left:1px solid #F0F2F3;">
+<sc-if value="{{ cell.hasBooking }}" hint-placeholder-val="{{ false }}">
+<div style="{{ cell.blockStyle }}">{{ cell.label }}</div>
+</sc-if>
+</div>
+</sc-for>
+</div>
+</sc-for>
+</div>
+</sc-if>
+
+<sc-if value="{{ isClientsPage }}" hint-placeholder-val="{{ false }}">
+<div style="border:1px solid #E7EAEC;border-radius:14px;overflow:hidden;">
+<div style="display:grid;grid-template-columns:1.6fr 1fr 1fr 1fr 0.8fr;padding:12px 16px;background:#F5F6F7;font-size:12px;font-weight:700;color:#6B7580;">
+<span>Client</span><span>Visits</span><span>Lifetime Spend</span><span>Last Visit</span><span>Marketing</span>
+</div>
+<sc-for list="{{ clientsList }}" as="c" hint-placeholder-count="5">
+<div style-hover="background:#FAFBFB" style="display:grid;grid-template-columns:1.6fr 1fr 1fr 1fr 0.8fr;padding:13px 16px;border-top:1px solid #E7EAEC;font-size:13.5px;color:#151A1E;align-items:center;">
+<div style="display:flex;align-items:center;gap:10px;">
+<div style="width:32px;height:32px;border-radius:16px;background:#EAF7F9;color:#0E8695;font-weight:800;font-size:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">{{ c.initial }}</div>
+<span style="font-weight:600;">{{ c.name }}</span>
+</div>
+<span>{{ c.visits }}</span><span>{{ c.spendLabel }}</span><span>{{ c.lastVisit }}</span>
+<span style="{{ c.marketingStyle }}">{{ c.marketingLabel }}</span>
+</div>
+</sc-for>
+</div>
+</sc-if>
+
+<sc-if value="{{ isAnalyticsPage }}" hint-placeholder-val="{{ false }}">
+<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:24px;">
+<sc-for list="{{ analyticsCards }}" as="ac" hint-placeholder-count="4">
+<div style="border:1px solid #E7EAEC;border-radius:14px;padding:18px;">
+<div style="font-size:12.5px;color:#6B7580;font-weight:600;">{{ ac.label }}</div>
+<div style="font-size:24px;font-weight:800;color:#151A1E;margin-top:6px;">{{ ac.value }}</div>
+</div>
+</sc-for>
+</div>
+<div style="font-size:13px;font-weight:700;color:#6B7580;margin-bottom:12px;">Popular Services</div>
+<div style="display:flex;flex-direction:column;gap:10px;margin-bottom:24px;">
+<sc-for list="{{ popularServicesList }}" as="ps" hint-placeholder-count="4">
+<div style="display:flex;align-items:center;gap:12px;">
+<div style="width:140px;font-size:13.5px;font-weight:600;color:#151A1E;flex-shrink:0;">{{ ps.name }}</div>
+<div style="flex:1;height:10px;border-radius:5px;background:#F0F2F3;overflow:hidden;"><div style="{{ ps.barStyle }}"></div></div>
+<div style="width:36px;text-align:right;font-size:12.5px;color:#6B7580;">{{ ps.countLabel }}</div>
+</div>
+</sc-for>
+</div>
+<div style="font-size:13px;font-weight:700;color:#6B7580;margin-bottom:12px;">Staff Performance</div>
+<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;">
+<sc-for list="{{ staffPerfList }}" as="sp" hint-placeholder-count="3">
+<div style="border:1px solid #E7EAEC;border-radius:14px;padding:16px;">
+<div style="font-size:14px;font-weight:700;color:#151A1E;">{{ sp.name }}</div>
+<div style="font-size:12.5px;color:#6B7580;margin-top:2px;">{{ sp.bookingsLabel }}</div>
+<div style="font-size:16px;font-weight:800;color:#151A1E;margin-top:8px;">{{ sp.revenueLabel }}</div>
+</div>
+</sc-for>
+</div>
+</sc-if>
+
+</div>
+</div>
+</sc-if>
+</div>
+</x-import>
+</div>
+
+<sc-if value="{{ hasToast }}" hint-placeholder-val="{{ false }}">
+<div style="position:fixed;left:50%;bottom:32px;transform:translateX(-50%);background:#151A1E;color:#fff;padding:13px 20px;border-radius:12px;font-size:13.5px;font-weight:600;box-shadow:0 6px 20px rgba(0,0,0,0.25);z-index:999;">{{ toast }}</div>
+</sc-if>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  teal = '#17AEBF'; ink = '#151A1E'; gray = '#6B7580'; border = '#E7EAEC'; tealSoft = '#EAF7F9'; tealDark = '#0E8695';
+
+  state = {
+    showLogin: false,
+    loginEmail: '', loginPassword: '',
+    adminPage: 'overview',
+    bookingsTab: 'all',
+    earnings: 3240,
+    weeklyRevenue: [420, 380, 510, 260, 640, 390, 470],
+    posCart: [],
+    posMethod: 'terminal',
+    adminServices: [
+      {id:'s1',name:'Classic Haircut',duration:'30 min',price:35},
+      {id:'s2',name:'Fade + Beard Trim',duration:'45 min',price:50},
+      {id:'s3',name:'Hot Towel Shave',duration:'25 min',price:30},
+      {id:'s4',name:'Kids Cut',duration:'20 min',price:22},
+    ],
+    businessProfile: { name:'Fade Masters Barbershop', address:'214 Elm St, Austin, TX', hours:'Mon–Sat · 9:00 AM–7:00 PM' },
+    staff: [ {id:'st1',name:'Marcus Diallo',role:'Senior Barber'}, {id:'st2',name:'Ray Chen',role:'Barber'}, {id:'st3',name:'Jasmine Cole',role:'Barber'} ],
+    calWeekOffset: 0,
+    clients: [
+      { id:'cl1', name:'Alex Rivera', visits:8, spend:340, lastVisit:'Jul 10', marketing:true },
+      { id:'cl2', name:'Jordan Lee', visits:3, spend:105, lastVisit:'Jul 17', marketing:true },
+      { id:'cl3', name:'Sam Park', visits:12, spend:410, lastVisit:'Jul 15', marketing:false },
+      { id:'cl4', name:'Casey Kim', visits:1, spend:50, lastVisit:'Jul 10', marketing:true },
+      { id:'cl5', name:'Priya Nair', visits:5, spend:190, lastVisit:'Jul 9', marketing:false },
+    ],
+    adminBookings: [
+      { id:'ab1', customerName:'Alex Rivera', service:'Fade + Beard Trim', date:'Jul 18', time:'2:00 PM', price:50, status:'upcoming' },
+      { id:'ab2', customerName:'Jordan Lee', service:'Classic Haircut', date:'Jul 17', time:'4:30 PM', price:35, status:'completed' },
+      { id:'ab3', customerName:'Sam Park', service:'Hot Towel Shave', date:'Jul 15', time:'10:00 AM', price:30, status:'completed' },
+      { id:'ab4', customerName:'Casey Kim', service:'Fade + Beard Trim', date:'Jul 10', time:'1:00 PM', price:50, status:'cancelled' },
+      { id:'ab5', customerName:'Priya Nair', service:'Kids Cut', date:'Jul 9', time:'11:30 AM', price:22, status:'completed' },
+      { id:'ab6', customerName:'Owen Brooks', service:'Classic Haircut', date:'Jul 19', time:'3:00 PM', price:35, status:'upcoming' },
+      { id:'ab7', customerName:'Maria Lopez', service:'Hot Towel Shave', date:'Jul 8', time:'9:30 AM', price:30, status:'completed' },
+      { id:'ab8', customerName:'Devon Hayes', service:'Fade + Beard Trim', date:'Jul 5', time:'5:00 PM', price:50, status:'cancelled' },
+    ],
+    toast: null,
+  };
+
+  showToast(msg) { this.setState({ toast: msg }); clearTimeout(this._t); this._t = setTimeout(() => this.setState({ toast: null }), 2000); }
+  goPage = (p) => this.setState({ adminPage: p });
+  setBookingsTab = (t) => this.setState({ bookingsTab: t });
+  signOut = () => { this.setState({ showLogin: true, loginEmail: '', loginPassword: '' }); this.showToast('Signed out'); };
+  setLoginEmail = (e) => this.setState({ loginEmail: e.target.value });
+  setLoginPassword = (e) => this.setState({ loginPassword: e.target.value });
+  signIn = () => {
+    if (!this.state.loginEmail.trim() || !this.state.loginPassword.trim()) { this.showToast('Enter email and password'); return; }
+    this.setState({ showLogin: false });
+  };
+
+  setPosMethod = (m) => this.setState({ posMethod: m });
+  addToPosCart = (id) => this.setState(s => {
+    const existing = s.posCart.find(c => c.id === id);
+    return { posCart: existing ? s.posCart.map(c => c.id === id ? { ...c, qty: c.qty + 1 } : c) : [...s.posCart, { id, qty: 1 }] };
+  });
+  removeFromPosCart = (id) => this.setState(s => ({ posCart: s.posCart.filter(c => c.id !== id) }));
+  chargePos = () => {
+    const s = this.state;
+    const total = s.posCart.reduce((a, c) => { const sv = s.adminServices.find(x => x.id === c.id); return a + (sv ? sv.price * c.qty : 0); }, 0);
+    if (!total) { this.showToast('Cart is empty'); return; }
+    this.setState({ earnings: s.earnings + total, posCart: [] });
+    this.showToast('Payment received');
+  };
+
+  updateServiceName = (id, val) => this.setState(s => ({ adminServices: s.adminServices.map(x => x.id === id ? { ...x, name: val } : x) }));
+  updateServiceDuration = (id, val) => this.setState(s => ({ adminServices: s.adminServices.map(x => x.id === id ? { ...x, duration: val } : x) }));
+  updateServicePrice = (id, val) => this.setState(s => ({ adminServices: s.adminServices.map(x => x.id === id ? { ...x, price: Number(val) || 0 } : x) }));
+  addService = () => this.setState(s => ({ adminServices: [...s.adminServices, { id: 'ns' + Date.now(), name: 'New Service', duration: '30 min', price: 0 }] }));
+  removeService = (id) => this.setState(s => ({ adminServices: s.adminServices.filter(x => x.id !== id) }));
+
+  updateStaffName = (id, val) => this.setState(s => ({ staff: s.staff.map(x => x.id === id ? { ...x, name: val } : x) }));
+  updateStaffRole = (id, val) => this.setState(s => ({ staff: s.staff.map(x => x.id === id ? { ...x, role: val } : x) }));
+  addStaff = () => this.setState(s => ({ staff: [...s.staff, { id: 'nst' + Date.now(), name: 'New Member', role: 'Staff' }] }));
+  removeStaff = (id) => this.setState(s => ({ staff: s.staff.filter(x => x.id !== id) }));
+
+  setBizName = (e) => this.setState(s => ({ businessProfile: { ...s.businessProfile, name: e.target.value } }));
+  setBizAddress = (e) => this.setState(s => ({ businessProfile: { ...s.businessProfile, address: e.target.value } }));
+  setBizHours = (e) => this.setState(s => ({ businessProfile: { ...s.businessProfile, hours: e.target.value } }));
+  saveBizProfile = () => this.showToast('Business profile saved');
+  prevCalWeek = () => this.setState(s => ({ calWeekOffset: s.calWeekOffset - 1 }));
+  nextCalWeek = () => this.setState(s => ({ calWeekOffset: s.calWeekOffset + 1 }));
+
+  renderVals() {
+    const s = this.state;
+    const { teal, ink, gray, border, tealSoft, tealDark } = this;
+
+    const navRowStyle = (active) => ({ display: 'flex', alignItems: 'center', gap: 10, padding: '10px 10px', borderRadius: 10, cursor: 'pointer', fontSize: 13.5, fontWeight: 600, background: active ? tealSoft : 'transparent', color: active ? tealDark : ink });
+    const pageTitles = { overview: 'Overview', bookings: 'Bookings', pos: 'Point of Sale', services: 'Manage Services', staff: 'Staff', profile: 'Business Profile', calendar: 'Calendar', clients: 'Clients', analytics: 'Analytics' };
+
+    const statusColors = { upcoming: teal, completed: '#1E9E5A', cancelled: '#D64545' };
+    const statusBg = { upcoming: tealSoft, completed: '#E9F8EF', cancelled: '#FBEAEA' };
+    const statusPillStyle = (status) => ({ display: 'inline-block', fontSize: 11, fontWeight: 700, padding: '4px 9px', borderRadius: 8, background: statusBg[status], color: statusColors[status], textTransform: 'capitalize' });
+
+    const withLabels = (b) => ({ ...b, priceLabel: '$' + b.price, statusLabel: b.status, statusStyle: statusPillStyle(b.status) });
+    const recentBookingsList = s.adminBookings.slice(0, 5).map(withLabels);
+
+    const bookingsTabsDefs = [{ key: 'all', label: 'All' }, { key: 'upcoming', label: 'Upcoming' }, { key: 'completed', label: 'Completed' }, { key: 'cancelled', label: 'Cancelled' }];
+    const bookingsTabs = bookingsTabsDefs.map(tb => {
+      const active = s.bookingsTab === tb.key;
+      return { ...tb, onClick: () => this.setBookingsTab(tb.key), style: { padding: '9px 16px', borderRadius: 18, fontSize: 13, fontWeight: 700, cursor: 'pointer', background: active ? teal : '#F5F6F7', color: active ? '#fff' : gray } };
+    });
+    const filteredAdminBookings = s.adminBookings.filter(b => s.bookingsTab === 'all' || b.status === s.bookingsTab).map(withLabels);
+    const noAdminBookingsInTab = filteredAdminBookings.length === 0;
+
+    const maxRevenue = Math.max(...s.weeklyRevenue, 1);
+    const revenueBars = s.weeklyRevenue.map((v, i) => ({
+      key: i, day: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'][i],
+      barStyle: { width: '100%', height: Math.round((v / maxRevenue) * 112) + 6, borderRadius: 6, background: i === s.weeklyRevenue.length - 1 ? teal : '#DCEFF1' },
+    }));
+
+    const statCards = [
+      { label: "Today's Bookings", value: String(s.adminBookings.filter(b => b.date === 'Jul 17').length || 2) },
+      { label: 'Revenue (MTD)', value: '$' + s.earnings.toLocaleString() },
+      { label: 'Avg Rating', value: '4.8' },
+      { label: 'Active Staff', value: String(s.staff.length) },
+    ];
+
+    const posServiceButtons = s.adminServices.map(sv => ({ ...sv, priceLabel: '$' + sv.price, onClick: () => this.addToPosCart(sv.id) }));
+    const posCartItems = s.posCart.map(c => {
+      const sv = s.adminServices.find(x => x.id === c.id);
+      return { id: c.id, name: sv ? sv.name : '', qtyLabel: String(c.qty), subtotalLabel: '$' + (sv ? sv.price * c.qty : 0), onRemove: () => this.removeFromPosCart(c.id) };
+    });
+    const posCartEmpty = posCartItems.length === 0;
+    const posTotal = s.posCart.reduce((a, c) => { const sv = s.adminServices.find(x => x.id === c.id); return a + (sv ? sv.price * c.qty : 0); }, 0);
+    const posMethodOptions = [{ key: 'tap', label: 'Tap to Pay' }, { key: 'reader', label: 'Card Reader' }, { key: 'cash', label: 'Cash' }].map(pm => {
+      const active = s.posMethod === pm.key;
+      return { ...pm, onClick: () => this.setPosMethod(pm.key), style: { flex: 1, padding: '9px 0', borderRadius: 8, fontSize: 12.5, fontWeight: 700, textAlign: 'center', cursor: 'pointer', background: active ? '#635BFF' : '#F5F6F7', color: active ? '#fff' : ink } };
+    });
+
+    const adminServicesList = s.adminServices.map(sv => ({
+      ...sv,
+      onNameChange: (e) => this.updateServiceName(sv.id, e.target.value),
+      onDurationChange: (e) => this.updateServiceDuration(sv.id, e.target.value),
+      onPriceChange: (e) => this.updateServicePrice(sv.id, e.target.value),
+      onRemove: () => this.removeService(sv.id),
+    }));
+
+    const staffList = s.staff.map(st => ({
+      ...st, initial: st.name.charAt(0).toUpperCase(),
+      onNameChange: (e) => this.updateStaffName(st.id, e.target.value),
+      onRoleChange: (e) => this.updateStaffRole(st.id, e.target.value),
+      onRemove: () => this.removeStaff(st.id),
+    }));
+
+    const weekStart = new Date();
+    weekStart.setDate(weekStart.getDate() - weekStart.getDay() + s.calWeekOffset * 7);
+    const calWeekDays = Array.from({ length: 7 }, (_, i) => {
+      const d = new Date(weekStart); d.setDate(weekStart.getDate() + i);
+      return { key: i, label: d.toLocaleDateString('en-US', { weekday: 'short' }).toUpperCase(), num: d.getDate() };
+    });
+    const weekEnd = new Date(weekStart); weekEnd.setDate(weekStart.getDate() + 6);
+    const calWeekRangeLabel = weekStart.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) + ' – ' + weekEnd.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+    const bookingSlots = { 'Jul 17-4:30 PM': s.adminBookings.find(b => b.date === 'Jul 17'), 'Jul 18-2:00 PM': s.adminBookings.find(b => b.date === 'Jul 18'), 'Jul 19-3:00 PM': s.adminBookings.find(b => b.date === 'Jul 19') };
+    const calHourRows = ['9 AM', '10 AM', '11 AM', '12 PM', '1 PM', '2 PM', '3 PM', '4 PM', '5 PM'].map((label, hi) => ({
+      key: hi, label,
+      cells: calWeekDays.map((wd, di) => {
+        const b = s.adminBookings.find(x => {
+          const hour = { '9 AM': 9, '10 AM': 10, '11 AM': 11, '12 PM': 12, '1 PM': 13, '2 PM': 14, '3 PM': 15, '4 PM': 16, '5 PM': 17 }[label];
+          const bh = parseInt(x.time); const bIsPM = x.time.includes('PM'); const bHour24 = bIsPM && bh !== 12 ? bh + 12 : bh;
+          return x.date === 'Jul ' + wd.num && bHour24 === hour;
+        });
+        return {
+          key: di, hasBooking: !!b, label: b ? b.customerName : '',
+          blockStyle: b ? { background: tealSoft, color: tealDark, fontSize: 11, fontWeight: 700, padding: '5px 6px', borderRadius: 6, height: '100%', boxSizing: 'border-box', overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis' } : {},
+        };
+      }),
+    }));
+
+    const clientsList = s.clients.map(c => ({
+      ...c, initial: c.name.charAt(0).toUpperCase(), spendLabel: '$' + c.spend, lastVisit: c.lastVisit,
+      marketingLabel: c.marketing ? 'Opted In' : 'Opted Out',
+      marketingStyle: { fontSize: 11.5, fontWeight: 700, color: c.marketing ? '#1E9E5A' : '#9AA5AC' },
+    }));
+
+    const analyticsCards = [
+      { label: 'Repeat Bookings', value: '68%' },
+      { label: 'Cancellation Rate', value: '4.2%' },
+      { label: 'Occupancy Rate', value: '76%' },
+      { label: 'Customer Retention', value: '82%' },
+    ];
+    const popularServiceCounts = [{ name: 'Fade + Beard Trim', count: 24 }, { name: 'Classic Haircut', count: 18 }, { name: 'Hot Towel Shave', count: 11 }, { name: 'Kids Cut', count: 7 }];
+    const maxServiceCount = Math.max(...popularServiceCounts.map(p => p.count), 1);
+    const popularServicesList = popularServiceCounts.map(p => ({ ...p, countLabel: String(p.count), barStyle: { width: Math.round((p.count / maxServiceCount) * 100) + '%', height: '100%', background: teal, borderRadius: 5 } }));
+    const staffPerfList = s.staff.map((st, i) => ({ name: st.name, bookingsLabel: (12 - i * 3) + ' bookings this month', revenueLabel: '$' + (620 - i * 140) }));
+
+    return {
+      devW: 1440, devH: 900,
+      pageTitle: pageTitles[s.adminPage],
+      goOverview: () => this.goPage('overview'), goBookingsPage: () => this.goPage('bookings'), goPOSPage: () => this.goPage('pos'),
+      goServicesPage: () => this.goPage('services'), goStaffPage: () => this.goPage('staff'), goBizProfilePage: () => this.goPage('profile'),
+      goCalendarPage: () => this.goPage('calendar'), goClientsPage: () => this.goPage('clients'), goAnalyticsPage: () => this.goPage('analytics'),
+      navOverviewStyle: navRowStyle(s.adminPage === 'overview'), navBookingsStyle: navRowStyle(s.adminPage === 'bookings'), navPOSStyle: navRowStyle(s.adminPage === 'pos'),
+      navServicesStyle: navRowStyle(s.adminPage === 'services'), navStaffStyle: navRowStyle(s.adminPage === 'staff'), navProfileStyle: navRowStyle(s.adminPage === 'profile'),
+      navCalendarStyle: navRowStyle(s.adminPage === 'calendar'), navClientsStyle: navRowStyle(s.adminPage === 'clients'), navAnalyticsStyle: navRowStyle(s.adminPage === 'analytics'),
+      isOverview: s.adminPage === 'overview', isBookingsPage: s.adminPage === 'bookings', isPOSPage: s.adminPage === 'pos',
+      isServicesPage: s.adminPage === 'services', isStaffPage: s.adminPage === 'staff', isBizProfilePage: s.adminPage === 'profile',
+      isCalendarPage: s.adminPage === 'calendar', isClientsPage: s.adminPage === 'clients', isAnalyticsPage: s.adminPage === 'analytics',
+      earningsLabel: '$' + s.earnings.toLocaleString(),
+      statCards, revenueBars, recentBookingsList,
+      bookingsTabs, filteredAdminBookings, noAdminBookingsInTab,
+      posServiceButtons, posCartItems, posCartEmpty, posTotalLabel: '$' + posTotal, posMethodOptions, chargePos: this.chargePos,
+      adminServicesList, addService: this.addService,
+      staffList, addStaff: this.addStaff,
+      businessProfile: s.businessProfile, setBizName: this.setBizName, setBizAddress: this.setBizAddress, setBizHours: this.setBizHours, saveBizProfile: this.saveBizProfile,
+      calWeekRangeLabel, calWeekDays, calHourRows, prevCalWeek: this.prevCalWeek, nextCalWeek: this.nextCalWeek,
+      clientsList, analyticsCards, popularServicesList, staffPerfList,
+      showLogin: s.showLogin, isDashboard: !s.showLogin, loginEmail: s.loginEmail, setLoginEmail: this.setLoginEmail, loginPassword: s.loginPassword, setLoginPassword: this.setLoginPassword, signIn: this.signIn,
+      signOut: this.signOut,
+      hasToast: !!s.toast, toast: s.toast,
+    };
+  }
+}
+
+</script>
+</body>
+</html>
