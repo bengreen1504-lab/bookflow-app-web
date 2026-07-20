@@ -28,8 +28,12 @@ export async function POST(request: Request) {
     const { data: services } = await supabase
       .from("services")
       .select("price_cents")
+      .eq("business_id", businessId)
       .in("id", serviceIds);
-    const amount = (services ?? []).reduce((sum, s) => sum + s.price_cents, 0);
+    if (!services || services.length !== serviceIds.length) {
+      return NextResponse.json({ error: "Those services don't all belong to this business" }, { status: 400 });
+    }
+    const amount = services.reduce((sum, s) => sum + s.price_cents, 0);
     if (amount <= 0) return NextResponse.json({ error: "Invalid services" }, { status: 400 });
 
     const intent = await stripe.paymentIntents.create({
@@ -70,12 +74,16 @@ export async function POST(request: Request) {
     const { data: services } = await supabase
       .from("services")
       .select("id, price_cents")
+      .eq("business_id", businessId)
       .in(
         "id",
         items.map((i) => i.serviceId)
       );
+    if (!services || services.length !== items.length) {
+      return NextResponse.json({ error: "Those services don't all belong to this business" }, { status: 400 });
+    }
     const amount = items.reduce((sum, i) => {
-      const svc = (services ?? []).find((s) => s.id === i.serviceId);
+      const svc = services.find((s) => s.id === i.serviceId);
       return sum + (svc ? svc.price_cents * i.qty : 0);
     }, 0);
     if (amount <= 0) return NextResponse.json({ error: "Invalid cart" }, { status: 400 });

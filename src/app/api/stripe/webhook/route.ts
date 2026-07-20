@@ -85,18 +85,20 @@ export async function POST(request: Request) {
         .single();
 
       if (!error && sale && services) {
-        await supabase.from("pos_sale_items").insert(
-          itemPairs.map((i) => {
-            const svc = services.find((s) => s.id === i.serviceId)!;
-            return {
+        const rows = itemPairs.flatMap((i) => {
+          const svc = services.find((s) => s.id === i.serviceId);
+          if (!svc) return [];
+          return [
+            {
               pos_sale_id: sale.id,
               service_id: svc.id,
               name_snapshot: svc.name,
               price_cents_snapshot: svc.price_cents,
               qty: i.qty,
-            };
-          })
-        );
+            },
+          ];
+        });
+        if (rows.length) await supabase.from("pos_sale_items").insert(rows);
       }
     }
   }
