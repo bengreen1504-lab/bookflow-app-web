@@ -9,6 +9,7 @@ const NAV_ITEMS = [
   { href: "/dashboard/calendar", label: "Calendar" },
   { href: "/dashboard/bookings", label: "Bookings" },
   { href: "/dashboard/clients", label: "Clients" },
+  { href: "/dashboard/messages", label: "Messages" },
   { href: "/dashboard/pos", label: "Point of Sale" },
   { href: "/dashboard/services", label: "Manage Services" },
   { href: "/dashboard/staff", label: "Staff" },
@@ -25,7 +26,7 @@ export function DashboardNav({ businessName }: { businessName: string }) {
       <div className="text-xs text-gray px-2 mt-0.5 mb-5 truncate">{businessName}</div>
       <nav className="flex flex-col gap-0.5 flex-1">
         {NAV_ITEMS.map((item) => {
-          const active = pathname === item.href;
+          const active = pathname.startsWith(item.href);
           return (
             <Link
               key={item.href}

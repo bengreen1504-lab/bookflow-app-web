@@ -16,17 +16,18 @@ export async function sendMessageAction(formData: FormData) {
     .single();
 
   const sender = business?.owner_id === user.id ? "business" : "customer";
+  // A business owner replies into a specific customer's thread; a customer
+  // only ever has one thread with a given business (their own).
+  const customerId = sender === "customer" ? user.id : String(formData.get("customer_id"));
 
-  // When the business owner sends a message, `customer_id` must be supplied
-  // separately (a business can have many customer threads); this action is
-  // only wired up on the customer side for now, so it's always the current
-  // user's own thread with the business.
   await supabase.from("messages").insert({
     business_id: businessId,
-    customer_id: sender === "customer" ? user.id : String(formData.get("customer_id")),
+    customer_id: customerId,
     sender,
     body,
   });
 
   revalidatePath(`/app/chat/${businessId}`);
+  revalidatePath(`/dashboard/messages/${customerId}`);
+  revalidatePath("/dashboard/messages");
 }

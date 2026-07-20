@@ -24,7 +24,7 @@ export default function SignUpPage() {
               role === "customer" ? "bg-teal text-white" : "text-gray"
             }`}
           >
-            I'm a customer
+            I&apos;m a customer
           </button>
           <button
             type="button"
