@@ -1,6 +1,36 @@
 import { NextResponse } from "next/server";
+import { createClient as createSupabaseClient } from "@supabase/supabase-js";
 import { stripe } from "@/lib/stripe";
 import { createClient } from "@/lib/supabase/server";
+import type { Database } from "@/lib/supabase/types";
+
+// Resolves the calling user for either the web app (cookie session, via
+// createClient()) or a native client (Supabase access token sent as a Bearer
+// header, since there's no browser cookie jar to read). The bearer branch
+// uses a plain anon-key client with the token forwarded as the Authorization
+// header, so RLS still evaluates auth.uid() as that user for any subsequent
+// queries made with the returned client.
+async function resolveUser(request: Request) {
+  const authHeader = request.headers.get("authorization");
+  if (authHeader?.startsWith("Bearer ")) {
+    const token = authHeader.slice("Bearer ".length);
+    const supabase = createSupabaseClient<Database>(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+      { global: { headers: { Authorization: `Bearer ${token}` } } }
+    );
+    const {
+      data: { user },
+    } = await supabase.auth.getUser(token);
+    return { supabase, user };
+  }
+
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  return { supabase, user };
+}
 
 // Creates a Stripe PaymentIntent for either a customer booking checkout or an
 // in-person POS sale. The booking/sale row itself is only written by the
@@ -8,10 +38,7 @@ import { createClient } from "@/lib/supabase/server";
 // customer closing the tab mid-payment never leaves a phantom "paid" record.
 export async function POST(request: Request) {
   const body = await request.json();
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const { supabase, user } = await resolveUser(request);
   if (!user) return NextResponse.json({ error: "Not signed in" }, { status: 401 });
 
   if (body.kind === "booking") {
