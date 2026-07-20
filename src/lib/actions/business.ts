@@ -24,7 +24,14 @@ export async function createBusinessAction(
     .from("businesses")
     .insert({ owner_id: user.id, name, category, address, hours });
 
-  if (error) return { error: error.message };
+  if (error) {
+    // A double-submitted form (or the onboarding page's own existing-business
+    // check losing a race) hits the unique constraint on owner_id — treat it
+    // as success rather than surfacing a raw DB error, since it just means
+    // the business already exists.
+    if (error.code === "23505") redirect("/dashboard/overview");
+    return { error: error.message };
+  }
 
   redirect("/dashboard/overview");
 }

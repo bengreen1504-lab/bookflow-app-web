@@ -54,7 +54,7 @@ export async function POST(request: Request) {
 
     const { data: services } = await supabase
       .from("services")
-      .select("price_cents")
+      .select("id, name, price_cents, duration_minutes")
       .eq("business_id", businessId)
       .in("id", serviceIds);
     if (!services || services.length !== serviceIds.length) {
@@ -71,9 +71,19 @@ export async function POST(request: Request) {
         kind: "booking",
         customer_id: user.id,
         business_id: businessId,
-        service_ids: serviceIds.join(","),
         booking_date: date,
         booking_time: time,
+        // Snapshot name/price/duration now rather than re-querying `services`
+        // in the webhook — if a business owner edits a price while this
+        // payment is in flight (e.g. mid 3D Secure confirmation), the
+        // receipt line items must reflect what was actually charged, not
+        // whatever the price happens to be by the time Stripe confirms.
+        service_snapshot: serviceIds
+          .map((id) => {
+            const s = services.find((x) => x.id === id)!;
+            return `${id}:${encodeURIComponent(s.name)}:${s.price_cents}:${s.duration_minutes}`;
+          })
+          .join("|"),
       },
     });
 
@@ -100,7 +110,7 @@ export async function POST(request: Request) {
 
     const { data: services } = await supabase
       .from("services")
-      .select("id, price_cents")
+      .select("id, name, price_cents")
       .eq("business_id", businessId)
       .in(
         "id",
@@ -123,7 +133,14 @@ export async function POST(request: Request) {
         kind: "pos",
         business_id: businessId,
         method,
-        items: items.map((i) => `${i.serviceId}:${i.qty}`).join(","),
+        // Same reasoning as the booking branch above: snapshot name/price
+        // now so a mid-payment price edit can't change the receipt.
+        item_snapshot: items
+          .map((i) => {
+            const s = services.find((x) => x.id === i.serviceId)!;
+            return `${i.serviceId}:${encodeURIComponent(s.name)}:${s.price_cents}:${i.qty}`;
+          })
+          .join("|"),
       },
     });
 

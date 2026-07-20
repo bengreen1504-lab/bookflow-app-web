@@ -21,17 +21,30 @@ export async function POST(request: Request) {
     );
   }
 
+  // Postgres unique-violation code. bookings/pos_sales both have a partial
+  // unique index on stripe_payment_intent_id (see migration 0003), so a
+  // redelivered event (Stripe retries at-least-once) hits this instead of
+  // silently inserting a second row for the same payment.
+  const UNIQUE_VIOLATION = "23505";
+
   if (event.type === "payment_intent.succeeded") {
     const intent = event.data.object as Stripe.PaymentIntent;
     const meta = intent.metadata;
     const supabase = createServiceRoleClient();
 
     if (meta.kind === "booking") {
-      const serviceIds = meta.service_ids.split(",").filter(Boolean);
-      const { data: services } = await supabase
-        .from("services")
-        .select("id, name, price_cents, duration_minutes")
-        .in("id", serviceIds);
+      const serviceLines = meta.service_snapshot
+        .split("|")
+        .filter(Boolean)
+        .map((entry) => {
+          const [serviceId, encodedName, priceCents, durationMinutes] = entry.split(":");
+          return {
+            serviceId,
+            name: decodeURIComponent(encodedName),
+            priceCents: Number(priceCents),
+            durationMinutes: Number(durationMinutes),
+          };
+        });
 
       const { data: booking, error } = await supabase
         .from("bookings")
@@ -47,31 +60,49 @@ export async function POST(request: Request) {
         .select()
         .single();
 
-      if (!error && booking && services) {
+      if (error?.code === UNIQUE_VIOLATION) {
+        if (error.message.includes("bookings_stripe_payment_intent_id_key")) {
+          // A redelivered webhook event for a payment we already recorded —
+          // truly a no-op.
+          return NextResponse.json({ received: true, note: "already processed" });
+        }
+        // Otherwise it's the double-booking guard (bookings_no_double_booking):
+        // two customers paid for the same slot and this one lost the race.
+        // The charge already succeeded on Stripe's side, so this customer
+        // has paid with no booking on file — surface it loudly rather than
+        // claiming success, since it needs a manual refund.
+        console.error(
+          `Booking conflict after successful payment ${intent.id}: slot ${meta.business_id}/${meta.booking_date}/${meta.booking_time} already booked. Customer ${meta.customer_id} paid but has no booking — needs a manual refund.`
+        );
+        return NextResponse.json({ received: true, note: "booking conflict — needs manual refund" });
+      }
+
+      if (!error && booking) {
         await supabase.from("booking_services").insert(
-          services.map((s) => ({
+          serviceLines.map((s) => ({
             booking_id: booking.id,
-            service_id: s.id,
+            service_id: s.serviceId,
             name_snapshot: s.name,
-            price_cents_snapshot: s.price_cents,
-            duration_minutes_snapshot: s.duration_minutes,
+            price_cents_snapshot: s.priceCents,
+            duration_minutes_snapshot: s.durationMinutes,
           }))
         );
       }
     }
 
     if (meta.kind === "pos") {
-      const itemPairs = meta.items.split(",").filter(Boolean).map((pair) => {
-        const [serviceId, qty] = pair.split(":");
-        return { serviceId, qty: Number(qty) };
-      });
-      const { data: services } = await supabase
-        .from("services")
-        .select("id, name, price_cents")
-        .in(
-          "id",
-          itemPairs.map((i) => i.serviceId)
-        );
+      const itemLines = meta.item_snapshot
+        .split("|")
+        .filter(Boolean)
+        .map((entry) => {
+          const [serviceId, encodedName, priceCents, qty] = entry.split(":");
+          return {
+            serviceId,
+            name: decodeURIComponent(encodedName),
+            priceCents: Number(priceCents),
+            qty: Number(qty),
+          };
+        });
 
       const { data: sale, error } = await supabase
         .from("pos_sales")
@@ -84,21 +115,20 @@ export async function POST(request: Request) {
         .select()
         .single();
 
-      if (!error && sale && services) {
-        const rows = itemPairs.flatMap((i) => {
-          const svc = services.find((s) => s.id === i.serviceId);
-          if (!svc) return [];
-          return [
-            {
-              pos_sale_id: sale.id,
-              service_id: svc.id,
-              name_snapshot: svc.name,
-              price_cents_snapshot: svc.price_cents,
-              qty: i.qty,
-            },
-          ];
-        });
-        if (rows.length) await supabase.from("pos_sale_items").insert(rows);
+      if (error?.code === UNIQUE_VIOLATION) {
+        return NextResponse.json({ received: true, note: "already processed" });
+      }
+
+      if (!error && sale) {
+        await supabase.from("pos_sale_items").insert(
+          itemLines.map((i) => ({
+            pos_sale_id: sale.id,
+            service_id: i.serviceId,
+            name_snapshot: i.name,
+            price_cents_snapshot: i.priceCents,
+            qty: i.qty,
+          }))
+        );
       }
     }
   }
