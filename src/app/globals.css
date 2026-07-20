@@ -1,0 +1,42 @@
+@import "tailwindcss";
+
+:root {
+  --color-teal: #17aebf;
+  --color-teal-dark: #0e8695;
+  --color-teal-soft: #eaf7f9;
+  --color-ink: #151a1e;
+  --color-gray: #6b7580;
+  --color-border: #e7eaec;
+  --color-page: #ededf1;
+  --color-success: #1e9e5a;
+  --color-success-bg: #e9f8ef;
+  --color-error: #d64545;
+  --color-error-bg: #fbeaea;
+  --color-warning: #de9a34;
+  --color-warning-bg: #fbf0df;
+  --color-stripe: #635bff;
+}
+
+@theme inline {
+  --color-teal: var(--color-teal);
+  --color-teal-dark: var(--color-teal-dark);
+  --color-teal-soft: var(--color-teal-soft);
+  --color-ink: var(--color-ink);
+  --color-gray: var(--color-gray);
+  --color-border: var(--color-border);
+  --color-page: var(--color-page);
+  --color-success: var(--color-success);
+  --color-success-bg: var(--color-success-bg);
+  --color-error: var(--color-error);
+  --color-error-bg: var(--color-error-bg);
+  --color-warning: var(--color-warning);
+  --color-warning-bg: var(--color-warning-bg);
+  --color-stripe: var(--color-stripe);
+  --font-sans: -apple-system, system-ui, "Segoe UI", Roboto, sans-serif;
+}
+
+body {
+  background: var(--color-page);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+}
