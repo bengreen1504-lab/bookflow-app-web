@@ -2,11 +2,15 @@
 
 import { useState, useTransition } from "react";
 import { money } from "@/lib/format";
-import { chargePosAction, type CartLine } from "@/lib/actions/pos";
+import { chargePosAction } from "@/lib/actions/pos";
 import { PosPayment } from "@/components/dashboard/pos-payment";
 import type { PosMethod } from "@/lib/supabase/types";
 
 type Service = { id: string; name: string; price_cents: number };
+// Local display cart — carries name/price for rendering only. The server
+// action re-derives real prices from the database rather than trusting
+// these when a charge is actually submitted (see lib/actions/pos.ts).
+type CartLine = { serviceId: string; name: string; priceCents: number; qty: number };
 
 const METHODS: { key: PosMethod; label: string }[] = [
   { key: "tap", label: "Tap to Pay" },
@@ -57,7 +61,10 @@ export function PosClient({ businessId, services }: { businessId: string; servic
 
     if (method === "cash") {
       startTransition(async () => {
-        const result = await chargePosAction(method, cart);
+        const result = await chargePosAction(
+          method,
+          cart.map((l) => ({ serviceId: l.serviceId, qty: l.qty }))
+        );
         if (result.error) flash(result.error);
         else {
           setCart([]);
