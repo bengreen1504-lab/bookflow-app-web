@@ -21,17 +21,24 @@ export function DashboardNav({ businessName }: { businessName: string }) {
   const pathname = usePathname();
 
   return (
-    <div className="w-[232px] shrink-0 border-r border-border flex flex-col p-4">
-      <div className="font-black tracking-tight text-ink px-2">BOOKFLOW</div>
-      <div className="text-xs text-gray px-2 mt-0.5 mb-5 truncate">{businessName}</div>
-      <nav className="flex flex-col gap-0.5 flex-1">
+    <div className="w-full md:w-[232px] shrink-0 border-b md:border-b-0 md:border-r border-border flex flex-col p-4">
+      <div className="flex items-center justify-between md:block">
+        <div>
+          <div className="font-black tracking-tight text-ink px-2">BOOKFLOW</div>
+          <div className="text-xs text-gray px-2 mt-0.5 mb-0 md:mb-5 truncate">{businessName}</div>
+        </div>
+        <form action={signOutAction} className="md:hidden">
+          <button className="px-2.5 py-2 text-[13px] font-semibold text-error">Sign Out</button>
+        </form>
+      </div>
+      <nav className="flex flex-row md:flex-col gap-0.5 flex-1 overflow-x-auto md:overflow-visible -mx-1 px-1 md:mx-0 md:px-0">
         {NAV_ITEMS.map((item) => {
           const active = pathname.startsWith(item.href);
           return (
             <Link
               key={item.href}
               href={item.href}
-              className={`rounded-[10px] px-2.5 py-2.5 text-[13.5px] font-semibold ${
+              className={`shrink-0 whitespace-nowrap rounded-[10px] px-2.5 py-2.5 text-[13.5px] font-semibold ${
                 active ? "bg-teal-soft text-teal-dark" : "text-ink hover:bg-black/[0.03]"
               }`}
             >
@@ -40,7 +47,7 @@ export function DashboardNav({ businessName }: { businessName: string }) {
           );
         })}
       </nav>
-      <form action={signOutAction}>
+      <form action={signOutAction} className="hidden md:block">
         <button className="text-left px-2.5 py-2.5 text-[13.5px] font-semibold text-error w-full">
           Sign Out
         </button>

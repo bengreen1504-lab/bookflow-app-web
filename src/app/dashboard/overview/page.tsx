@@ -73,7 +73,7 @@ export default async function OverviewPage() {
         </div>
       </div>
 
-      <div className="grid grid-cols-3 gap-4 mb-6">
+      <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 mb-6">
         {stats.map((s) => (
           <div key={s.label} className="border border-border rounded-2xl p-4.5">
             <div className="text-xs text-gray font-semibold">{s.label}</div>
@@ -103,31 +103,33 @@ export default async function OverviewPage() {
       </div>
 
       <div className="text-[13px] font-bold text-gray mb-3">Recent Bookings</div>
-      <div className="border border-border rounded-2xl overflow-hidden">
-        <div className="grid grid-cols-[1.4fr_1.6fr_1fr_0.7fr_0.9fr] px-4 py-3 bg-black/[0.02] text-xs font-bold text-gray">
-          <span>Customer</span>
-          <span>Service</span>
-          <span>Date</span>
-          <span>Price</span>
-          <span>Status</span>
-        </div>
-        {(recent ?? []).map((b) => (
-          <div
-            key={b.id}
-            className="grid grid-cols-[1.4fr_1.6fr_1fr_0.7fr_0.9fr] px-4 py-3 border-t border-border text-[13.5px] items-center"
-          >
-            <span>{b.profiles?.full_name ?? "—"}</span>
-            <span className="truncate">
-              {b.booking_services?.map((s) => s.name_snapshot).join(", ") || "—"}
-            </span>
-            <span>{b.booking_date}</span>
-            <span>{money(b.total_price_cents)}</span>
-            <StatusPill status={b.status} />
+      <div className="border border-border rounded-2xl overflow-x-auto">
+        <div className="min-w-[640px]">
+          <div className="grid grid-cols-[1.4fr_1.6fr_1fr_0.7fr_0.9fr] px-4 py-3 bg-black/[0.02] text-xs font-bold text-gray">
+            <span>Customer</span>
+            <span>Service</span>
+            <span>Date</span>
+            <span>Price</span>
+            <span>Status</span>
           </div>
-        ))}
-        {(recent ?? []).length === 0 && (
-          <div className="text-center text-gray text-[13.5px] py-8">No bookings yet.</div>
-        )}
+          {(recent ?? []).map((b) => (
+            <div
+              key={b.id}
+              className="grid grid-cols-[1.4fr_1.6fr_1fr_0.7fr_0.9fr] px-4 py-3 border-t border-border text-[13.5px] items-center"
+            >
+              <span>{b.profiles?.full_name ?? "—"}</span>
+              <span className="truncate">
+                {b.booking_services?.map((s) => s.name_snapshot).join(", ") || "—"}
+              </span>
+              <span>{b.booking_date}</span>
+              <span>{money(b.total_price_cents)}</span>
+              <StatusPill status={b.status} />
+            </div>
+          ))}
+          {(recent ?? []).length === 0 && (
+            <div className="text-center text-gray text-[13.5px] py-8">No bookings yet.</div>
+          )}
+        </div>
       </div>
     </div>
   );

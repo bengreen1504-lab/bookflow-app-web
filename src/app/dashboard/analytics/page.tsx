@@ -44,7 +44,7 @@ export default async function AnalyticsPage() {
     <div>
       <h1 className="text-2xl font-extrabold text-ink mb-7">Analytics</h1>
 
-      <div className="grid grid-cols-4 gap-4 mb-7">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-7">
         {stats.map((s) => (
           <div key={s.label} className="border border-border rounded-2xl p-4.5">
             <div className="text-xs text-gray font-semibold">{s.label}</div>

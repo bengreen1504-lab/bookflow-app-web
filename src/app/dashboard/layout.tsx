@@ -9,9 +9,9 @@ export default async function DashboardLayout({
   const { business } = await requireBusiness();
 
   return (
-    <div className="min-h-screen flex bg-white">
+    <div className="min-h-screen flex flex-col md:flex-row bg-white">
       <DashboardNav businessName={business.name} />
-      <div className="flex-1 min-w-0 overflow-auto p-8">{children}</div>
+      <div className="flex-1 min-w-0 overflow-auto p-4 md:p-8">{children}</div>
     </div>
   );
 }

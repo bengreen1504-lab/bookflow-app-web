@@ -14,26 +14,28 @@ export default async function ServicesPage() {
     <div>
       <h1 className="text-2xl font-extrabold text-ink mb-7">Manage Services</h1>
 
-      <div className="border border-border rounded-2xl overflow-hidden mb-4">
-        <div className="grid grid-cols-[2fr_1fr_1fr_0.6fr] px-4 py-3 bg-black/[0.02] text-xs font-bold text-gray">
-          <span>Service</span>
-          <span>Duration</span>
-          <span>Price</span>
-          <span />
-        </div>
-        {(services ?? []).map((s) => (
-          <ServiceRow
-            key={s.id}
-            service={s}
-            updateAction={updateServiceAction}
-            removeAction={removeServiceAction}
-          />
-        ))}
-        {(services ?? []).length === 0 && (
-          <div className="text-center text-gray text-[13.5px] py-8">
-            No services yet — add your first one below.
+      <div className="border border-border rounded-2xl overflow-x-auto mb-4">
+        <div className="min-w-[460px]">
+          <div className="grid grid-cols-[2fr_1fr_1fr_0.6fr] px-4 py-3 bg-black/[0.02] text-xs font-bold text-gray">
+            <span>Service</span>
+            <span>Duration</span>
+            <span>Price</span>
+            <span />
           </div>
-        )}
+          {(services ?? []).map((s) => (
+            <ServiceRow
+              key={s.id}
+              service={s}
+              updateAction={updateServiceAction}
+              removeAction={removeServiceAction}
+            />
+          ))}
+          {(services ?? []).length === 0 && (
+            <div className="text-center text-gray text-[13.5px] py-8">
+              No services yet — add your first one below.
+            </div>
+          )}
+        </div>
       </div>
 
       <form action={addServiceAction} className="flex flex-wrap gap-2 items-end">

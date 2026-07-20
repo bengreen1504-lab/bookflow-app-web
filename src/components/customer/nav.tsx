@@ -16,16 +16,16 @@ export function CustomerNav({ unreadCount }: { unreadCount: number }) {
 
   return (
     <nav className="border-b border-border bg-white sticky top-0 z-10">
-      <div className="max-w-[900px] mx-auto px-6 h-[64px] flex items-center justify-between">
-        <Link href="/app/home" className="font-black tracking-tight text-ink">
+      <div className="max-w-[900px] mx-auto px-4 sm:px-6 h-[64px] flex items-center justify-between gap-3">
+        <Link href="/app/home" className="font-black tracking-tight text-ink shrink-0">
           BOOKFLOW
         </Link>
-        <div className="flex items-center gap-5">
+        <div className="flex items-center gap-3 sm:gap-5 overflow-x-auto">
           {LINKS.map((l) => (
             <Link
               key={l.href}
               href={l.href}
-              className={`relative text-sm font-bold ${
+              className={`relative shrink-0 whitespace-nowrap text-[13px] sm:text-sm font-bold ${
                 pathname.startsWith(l.href) ? "text-teal" : "text-gray"
               }`}
             >
@@ -35,8 +35,10 @@ export function CustomerNav({ unreadCount }: { unreadCount: number }) {
               )}
             </Link>
           ))}
-          <form action={signOutAction}>
-            <button className="text-sm font-bold text-error">Sign Out</button>
+          <form action={signOutAction} className="shrink-0">
+            <button className="whitespace-nowrap text-[13px] sm:text-sm font-bold text-error">
+              Sign Out
+            </button>
           </form>
         </div>
       </div>

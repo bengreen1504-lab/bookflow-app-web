@@ -91,8 +91,8 @@ export function PosClient({ businessId, services }: { businessId: string; servic
   }
 
   return (
-    <div className="grid grid-cols-[1.4fr_1fr] gap-6 items-start">
-      <div className="grid grid-cols-3 gap-3">
+    <div className="grid grid-cols-1 lg:grid-cols-[1.4fr_1fr] gap-6 items-start">
+      <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
         {services.map((s) => (
           <button
             key={s.id}

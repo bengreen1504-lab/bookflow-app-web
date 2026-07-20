@@ -18,7 +18,7 @@ export default async function BrowsePage() {
   return (
     <div>
       <h1 className="text-2xl font-extrabold text-ink mb-6">Nearby Providers</h1>
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         {(businesses ?? []).map((b) => (
           <Link
             key={b.id}
