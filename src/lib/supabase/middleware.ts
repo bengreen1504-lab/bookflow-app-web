@@ -33,7 +33,12 @@ export async function updateSession(request: NextRequest) {
   const isPublic =
     PUBLIC_PATHS.includes(pathname) ||
     pathname.startsWith("/_next") ||
-    pathname.startsWith("/api/stripe/webhook");
+    // The webhook is called by Stripe with no session at all, and
+    // create-intent authenticates callers itself (browser cookie session OR
+    // a Supabase access token in the Authorization header, for the native
+    // app) — redirecting either to /sign-in for lacking a cookie would break
+    // both the intended no-cookie caller and the bearer-token one.
+    pathname.startsWith("/api/stripe/");
 
   if (!user && !isPublic) {
     const url = request.nextUrl.clone();
@@ -42,28 +47,20 @@ export async function updateSession(request: NextRequest) {
     return NextResponse.redirect(url);
   }
 
-  if (user && pathname.startsWith("/dashboard")) {
+  if (user && (pathname.startsWith("/dashboard") || pathname.startsWith("/app"))) {
     const { data: profile } = await supabase
       .from("profiles")
       .select("role")
       .eq("id", user.id)
       .single();
 
-    if (profile?.role !== "business_owner") {
+    if (pathname.startsWith("/dashboard") && profile?.role !== "business_owner") {
       const url = request.nextUrl.clone();
       url.pathname = "/app/home";
       return NextResponse.redirect(url);
     }
-  }
 
-  if (user && pathname.startsWith("/app")) {
-    const { data: profile } = await supabase
-      .from("profiles")
-      .select("role")
-      .eq("id", user.id)
-      .single();
-
-    if (profile?.role === "business_owner") {
+    if (pathname.startsWith("/app") && profile?.role === "business_owner") {
       const url = request.nextUrl.clone();
       url.pathname = "/dashboard/overview";
       return NextResponse.redirect(url);

@@ -63,7 +63,11 @@ export async function signInAction(
     return { error: "Incorrect email or password." };
   }
 
-  if (next) {
+  // Only follow `next` if it's a same-origin relative path — it comes
+  // straight from a query string an attacker can craft
+  // (/sign-in?next=https://evil.example), so redirecting an
+  // already-authenticated user there unchecked would be an open redirect.
+  if (next.startsWith("/") && !next.startsWith("//")) {
     redirect(next);
   }
 
