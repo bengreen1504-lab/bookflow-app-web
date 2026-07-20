@@ -1,12 +1,13 @@
 {
-  "name": "bookflow-scaffold",
+  "name": "bookflow-app-web",
   "version": "0.1.0",
   "private": true,
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "seed": "node --env-file=.env.local scripts/seed.mjs"
   },
   "dependencies": {
     "@stripe/react-stripe-js": "^6.8.0",

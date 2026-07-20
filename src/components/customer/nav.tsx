@@ -7,10 +7,11 @@ import { signOutAction } from "@/lib/actions/auth";
 const LINKS = [
   { href: "/app/home", label: "Browse" },
   { href: "/app/bookings", label: "Bookings" },
+  { href: "/app/notifications", label: "Alerts" },
   { href: "/app/profile", label: "Profile" },
 ];
 
-export function CustomerNav() {
+export function CustomerNav({ unreadCount }: { unreadCount: number }) {
   const pathname = usePathname();
 
   return (
@@ -24,11 +25,14 @@ export function CustomerNav() {
             <Link
               key={l.href}
               href={l.href}
-              className={`text-sm font-bold ${
+              className={`relative text-sm font-bold ${
                 pathname.startsWith(l.href) ? "text-teal" : "text-gray"
               }`}
             >
               {l.label}
+              {l.href === "/app/notifications" && unreadCount > 0 && (
+                <span className="absolute -top-1.5 -right-2.5 w-2 h-2 rounded-full bg-error" />
+              )}
             </Link>
           ))}
           <form action={signOutAction}>
