@@ -39,6 +39,7 @@ export interface Database {
           category: BusinessCategory;
           address: string;
           hours: string;
+          photo_url: string | null;
           created_at: string;
         };
         Insert: Partial<Database["public"]["Tables"]["businesses"]["Row"]> & {
@@ -320,6 +321,29 @@ export interface Database {
         Relationships: [
           {
             foreignKeyName: "notifications_user_id_fkey";
+            columns: ["user_id"];
+            isOneToOne: false;
+            referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          }
+        ];
+      };
+      device_push_tokens: {
+        Row: {
+          id: string;
+          user_id: string;
+          token: string;
+          platform: string;
+          created_at: string;
+        };
+        Insert: Partial<Database["public"]["Tables"]["device_push_tokens"]["Row"]> & {
+          user_id: string;
+          token: string;
+        };
+        Update: Partial<Database["public"]["Tables"]["device_push_tokens"]["Row"]>;
+        Relationships: [
+          {
+            foreignKeyName: "device_push_tokens_user_id_fkey";
             columns: ["user_id"];
             isOneToOne: false;
             referencedRelation: "profiles";

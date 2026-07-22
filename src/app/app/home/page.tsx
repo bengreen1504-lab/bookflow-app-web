@@ -12,7 +12,7 @@ export default async function BrowsePage() {
   const supabase = await createClient();
   const { data: businesses } = await supabase
     .from("businesses")
-    .select("id, name, category, address")
+    .select("id, name, category, address, photo_url")
     .order("created_at", { ascending: false });
 
   return (
@@ -25,7 +25,16 @@ export default async function BrowsePage() {
             href={`/app/business/${b.id}`}
             className="border border-border rounded-2xl p-4 flex gap-3 items-center hover:border-teal"
           >
-            <div className="w-16 h-16 rounded-xl bg-black/[0.04] shrink-0" />
+            {b.photo_url ? (
+              // eslint-disable-next-line @next/next/no-img-element -- remote Supabase Storage URL, domain varies per project
+              <img
+                src={b.photo_url}
+                alt=""
+                className="w-16 h-16 rounded-xl object-cover shrink-0"
+              />
+            ) : (
+              <div className="w-16 h-16 rounded-xl bg-black/[0.04] shrink-0" />
+            )}
             <div className="min-w-0">
               <div className="text-[15px] font-bold text-ink truncate">{b.name}</div>
               <div className="text-xs text-gray mt-0.5">{CATEGORY_LABELS[b.category] ?? b.category}</div>

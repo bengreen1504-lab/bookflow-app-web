@@ -31,7 +31,16 @@ export default async function BusinessDetailPage({
 
   return (
     <div>
-      <div className="w-full h-40 rounded-2xl bg-black/[0.04] mb-5" />
+      {business.photo_url ? (
+        // eslint-disable-next-line @next/next/no-img-element -- remote Supabase Storage URL, domain varies per project
+        <img
+          src={business.photo_url}
+          alt=""
+          className="w-full h-40 rounded-2xl object-cover mb-5"
+        />
+      ) : (
+        <div className="w-full h-40 rounded-2xl bg-black/[0.04] mb-5" />
+      )}
       <h1 className="text-2xl font-extrabold text-ink">{business.name}</h1>
       <p className="text-sm text-gray mt-1">{business.address}</p>
       <p className="text-sm text-gray mt-0.5">{business.hours}</p>
