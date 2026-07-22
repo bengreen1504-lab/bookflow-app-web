@@ -17,7 +17,13 @@ const NAV_ITEMS = [
   { href: "/dashboard/profile", label: "Business Profile" },
 ];
 
-export function DashboardNav({ businessName }: { businessName: string }) {
+export function DashboardNav({
+  businessName,
+  unreadMessageCount,
+}: {
+  businessName: string;
+  unreadMessageCount: number;
+}) {
   const pathname = usePathname();
 
   return (
@@ -38,11 +44,14 @@ export function DashboardNav({ businessName }: { businessName: string }) {
             <Link
               key={item.href}
               href={item.href}
-              className={`shrink-0 whitespace-nowrap rounded-[10px] px-2.5 py-2.5 text-[13.5px] font-semibold ${
+              className={`relative shrink-0 whitespace-nowrap rounded-[10px] px-2.5 py-2.5 text-[13.5px] font-semibold ${
                 active ? "bg-teal-soft text-teal-dark" : "text-ink hover:bg-black/[0.03]"
               }`}
             >
               {item.label}
+              {item.href === "/dashboard/messages" && unreadMessageCount > 0 && (
+                <span className="absolute top-1 right-1 w-2 h-2 rounded-full bg-error" />
+              )}
             </Link>
           );
         })}

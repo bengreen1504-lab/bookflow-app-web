@@ -8,7 +8,7 @@ export default async function MessageThreadPage({
   params: Promise<{ customerId: string }>;
 }) {
   const { customerId } = await params;
-  const { supabase, business } = await requireBusiness();
+  const { supabase, user, business } = await requireBusiness();
 
   const { data: customer } = await supabase
     .from("profiles")
@@ -23,6 +23,16 @@ export default async function MessageThreadPage({
     .eq("business_id", business.id)
     .eq("customer_id", customerId)
     .order("created_at");
+
+  // Clear the unread badge for this conversation now that the owner's
+  // actually looking at it.
+  await supabase
+    .from("notifications")
+    .update({ read: true })
+    .eq("user_id", user.id)
+    .eq("target_type", "chat")
+    .eq("target_id", customerId)
+    .eq("read", false);
 
   return (
     <div className="max-w-[560px] flex flex-col h-[calc(100vh-64px)]">
