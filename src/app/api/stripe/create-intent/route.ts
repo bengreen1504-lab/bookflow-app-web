@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { createClient as createSupabaseClient } from "@supabase/supabase-js";
 import { stripe } from "@/lib/stripe";
 import { createClient } from "@/lib/supabase/server";
+import { fetchOwnedServices } from "@/lib/services";
 import type { Database } from "@/lib/supabase/types";
 
 // Resolves the calling user for either the web app (cookie session, via
@@ -52,12 +53,8 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Missing booking details" }, { status: 400 });
     }
 
-    const { data: services } = await supabase
-      .from("services")
-      .select("id, name, price_cents, duration_minutes")
-      .eq("business_id", businessId)
-      .in("id", serviceIds);
-    if (!services || services.length !== serviceIds.length) {
+    const services = await fetchOwnedServices(supabase, businessId, serviceIds);
+    if (!services) {
       return NextResponse.json({ error: "Those services don't all belong to this business" }, { status: 400 });
     }
     const amount = services.reduce((sum, s) => sum + s.price_cents, 0);
@@ -78,11 +75,12 @@ export async function POST(request: Request) {
         // payment is in flight (e.g. mid 3D Secure confirmation), the
         // receipt line items must reflect what was actually charged, not
         // whatever the price happens to be by the time Stripe confirms.
-        service_snapshot: serviceIds
-          .map((id) => {
-            const s = services.find((x) => x.id === id)!;
-            return `${id}:${encodeURIComponent(s.name)}:${s.price_cents}:${s.duration_minutes}`;
-          })
+        // Built from `services` (already deduped by fetchOwnedServices)
+        // rather than the raw request's serviceIds, so a duplicated id in
+        // the request can't produce a snapshot listing more line items than
+        // were actually priced into `amount`.
+        service_snapshot: services
+          .map((s) => `${s.id}:${encodeURIComponent(s.name)}:${s.price_cents}:${s.duration_minutes}`)
           .join("|"),
       },
     });
@@ -108,14 +106,11 @@ export async function POST(request: Request) {
       .maybeSingle();
     if (!business) return NextResponse.json({ error: "Not authorized" }, { status: 403 });
 
-    const { data: services } = await supabase
-      .from("services")
-      .select("id, name, price_cents")
-      .eq("business_id", businessId)
-      .in(
-        "id",
-        items.map((i) => i.serviceId)
-      );
+    const services = await fetchOwnedServices(
+      supabase,
+      businessId,
+      items.map((i) => i.serviceId)
+    );
     if (!services || services.length !== items.length) {
       return NextResponse.json({ error: "Those services don't all belong to this business" }, { status: 400 });
     }

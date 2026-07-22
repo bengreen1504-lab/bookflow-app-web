@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { requireBusiness } from "@/lib/data/session";
+import { fetchOwnedServices } from "@/lib/services";
 import type { PosMethod } from "@/lib/supabase/types";
 
 export type ChargeItem = { serviceId: string; qty: number };
@@ -10,19 +11,12 @@ export async function chargePosAction(method: PosMethod, cart: ChargeItem[]) {
   const { supabase, business } = await requireBusiness();
   if (cart.length === 0) return { error: "Cart is empty" };
 
-  // Re-fetch real names/prices from the DB rather than trusting whatever the
-  // client sent — a tampered client-side cart must not be able to record an
-  // arbitrary price for a real service.
-  const { data: services } = await supabase
-    .from("services")
-    .select("id, name, price_cents")
-    .eq("business_id", business.id)
-    .in(
-      "id",
-      cart.map((l) => l.serviceId)
-    );
-
-  if (!services || services.length !== cart.length) {
+  const services = await fetchOwnedServices(
+    supabase,
+    business.id,
+    cart.map((l) => l.serviceId)
+  );
+  if (!services) {
     return { error: "Those services don't all belong to this business" };
   }
 
